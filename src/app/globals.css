@@ -1,0 +1,153 @@
+@import "tailwindcss";
+
+/**
+ * NEXUS Spatial UI Design System
+ * CSS Custom Properties for theming
+ */
+
+@layer base {
+  :root {
+    /* Light Theme (Default) */
+    
+    /* Surfaces */
+    --bg-primary: 0 0% 100%;
+    --bg-secondary: 210 20% 98%;
+    --bg-tertiary: 210 20% 96%;
+    --bg-elevated: 0 0% 100%;
+    --bg-overlay: 0 0% 0%;
+    
+    /* Text */
+    --text-primary: 222 20% 12%;
+    --text-secondary: 220 10% 45%;
+    --text-tertiary: 220 10% 60%;
+    --text-disabled: 220 10% 75%;
+    --text-inverse: 0 0% 100%;
+    
+    /* Borders */
+    --border-primary: 220 13% 91%;
+    --border-secondary: 220 13% 87%;
+    --border-focus: 222 70% 55%;
+    --border-hover: 220 13% 85%;
+    
+    /* Interactive */
+    --interactive-primary: 222 70% 55%;
+    --interactive-primary-hover: 222 70% 50%;
+    --interactive-primary-active: 222 70% 45%;
+    --interactive-secondary: 220 13% 91%;
+    --interactive-secondary-hover: 220 13% 87%;
+    --interactive-secondary-active: 220 13% 83%;
+    
+    /* Status */
+    --status-success: 142 70% 45%;
+    --status-success-subtle: 142 70% 97%;
+    --status-warning: 38 92% 50%;
+    --status-warning-subtle: 38 92% 97%;
+    --status-error: 0 72% 51%;
+    --status-error-subtle: 0 72% 97%;
+    --status-info: 210 92% 50%;
+    --status-info-subtle: 210 92% 97%;
+    
+    /* Accent */
+    --accent-purple: 270 70% 60%;
+    --accent-purple-subtle: 270 70% 97%;
+    --accent-pink: 330 70% 60%;
+    --accent-pink-subtle: 330 70% 97%;
+    --accent-orange: 25 85% 55%;
+    --accent-orange-subtle: 25 85% 97%;
+    --accent-teal: 175 70% 45%;
+    --accent-teal-subtle: 175 70% 97%;
+    --accent-indigo: 240 70% 60%;
+    --accent-indigo-subtle: 240 70% 97%;
+    
+    /* Spacing & Layout */
+    --radius-sm: 0.25rem;
+    --radius-base: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+  }
+  
+  .dark {
+    /* Dark Theme */
+    
+    /* Surfaces */
+    --bg-primary: 222 20% 8%;
+    --bg-secondary: 222 18% 11%;
+    --bg-tertiary: 222 16% 14%;
+    --bg-elevated: 222 16% 16%;
+    --bg-overlay: 0 0% 0%;
+    
+    /* Text */
+    --text-primary: 210 20% 98%;
+    --text-secondary: 220 10% 70%;
+    --text-tertiary: 220 10% 55%;
+    --text-disabled: 220 10% 40%;
+    --text-inverse: 222 20% 12%;
+    
+    /* Borders */
+    --border-primary: 220 13% 20%;
+    --border-secondary: 220 13% 25%;
+    --border-focus: 222 70% 60%;
+    --border-hover: 220 13% 27%;
+    
+    /* Interactive */
+    --interactive-primary: 222 70% 60%;
+    --interactive-primary-hover: 222 70% 65%;
+    --interactive-primary-active: 222 70% 70%;
+    --interactive-secondary: 220 13% 20%;
+    --interactive-secondary-hover: 220 13% 25%;
+    --interactive-secondary-active: 220 13% 30%;
+    
+    /* Status */
+    --status-success: 142 60% 50%;
+    --status-success-subtle: 142 60% 12%;
+    --status-warning: 38 80% 55%;
+    --status-warning-subtle: 38 80% 12%;
+    --status-error: 0 65% 55%;
+    --status-error-subtle: 0 65% 12%;
+    --status-info: 210 80% 55%;
+    --status-info-subtle: 210 80% 12%;
+    
+    /* Accent */
+    --accent-purple: 270 60% 65%;
+    --accent-purple-subtle: 270 60% 12%;
+    --accent-pink: 330 60% 65%;
+    --accent-pink-subtle: 330 60% 12%;
+    --accent-orange: 25 75% 60%;
+    --accent-orange-subtle: 25 75% 12%;
+    --accent-teal: 175 60% 50%;
+    --accent-teal-subtle: 175 60% 12%;
+    --accent-indigo: 240 60% 65%;
+    --accent-indigo-subtle: 240 60% 12%;
+  }
+  
+  * {
+    border-color: hsl(var(--border-primary));
+  }
+  
+  body {
+    background-color: hsl(var(--bg-primary));
+    color: hsl(var(--text-primary));
+    font-feature-settings: "rlig" 1, "calt" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+}
+
+@layer utilities {
+  /* Focus visible styles for accessibility */
+  .focus-ring {
+    outline: none;
+    box-shadow: 0 0 0 2px hsl(var(--border-focus)), 0 0 0 4px hsl(var(--bg-primary));
+  }
+  
+  /* Reduce motion for accessibility */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
