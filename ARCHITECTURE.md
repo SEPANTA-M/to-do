@@ -425,5 +425,38 @@ All entities follow these conventions:
 
 ---
 
-**Last Updated:** PHASE 0 - Foundation Complete  
-**Next Review:** PHASE 1 - Task Management Implementation
+**Last Updated:** Final build — local-first production
+
+## Phase 2 domain
+
+See `DOMAIN_MODEL.md` for Goal → Milestone → Project → Task relationships, progress math, and deletion rules.
+
+## Persistence (actual)
+
+The UI is **local-first**. IndexedDB database `nexus-local`, store `kv`. Components never touch IndexedDB directly; they go through Zustand stores and repositories.
+
+PostgreSQL / Drizzle remain as a schema and optional pool (`db` is `null` without `DATABASE_URL`). Server actions in `src/app/actions/tasks.ts` are unused by the UI.
+
+### Keys
+
+- `nexus.tasks` `nexus.task-history` `nexus.mutations`
+- `nexus.goals` `nexus.milestones` `nexus.projects` `nexus.activity`
+- `nexus.notes` `nexus.events` `nexus.focus-sessions`
+- `nexus.settings` `nexus.reviews` `nexus.notifications`
+- Theme: `localStorage` `nexus-theme`
+
+### Sync
+
+Pending mutations are a ledger, not a live worker. `/api/sync` reports that cloud sync is unavailable. Conflicts are never auto-resolved by overwriting.
+
+### Auth
+
+No cloud accounts. Optional display name in settings. Do not store passwords.
+
+### Scheduling
+
+Tasks with `startTime` and calendar events share occupancy. Day Flow and Calendar mutate the same task model. Smart scheduling suggests free slots; it never rearranges without confirmation.
+
+### Focus
+
+Sessions persist `startedAt` (`startTime`), `endTime`, accumulated duration, interruptions, and task id. Completing a session can complete the task; exiting does not.

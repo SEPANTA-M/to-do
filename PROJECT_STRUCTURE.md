@@ -543,4 +543,13 @@ const nav = [
 
 ---
 
-**Last Updated:** PHASE 0 - Foundation Complete
+**Last Updated:** PHASE 2 — Goals & Projects
+
+Phase 2 additions:
+
+- `src/domain/goal/`, `src/domain/milestone/`, `src/domain/project/`
+- `src/domain/progress.ts`, `src/domain/relationships.ts`, `src/domain/deadlines.ts`
+- `src/state/workspace-store.ts`
+- `src/persistence/workspace-repository.ts`
+- `src/app/goals/[id]/`, `src/app/projects/[id]/`
+- `DOMAIN_MODEL.md`

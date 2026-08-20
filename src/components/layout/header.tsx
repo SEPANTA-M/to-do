@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { Command, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/primitives/button";
 import { useThemeStore } from "@/state/theme-store";
@@ -11,39 +10,39 @@ interface HeaderProps {
 
 export function Header({ onCommandOpen }: HeaderProps) {
   const { resolvedTheme, setTheme } = useThemeStore();
-  
+
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
   };
-  
+
   return (
-    <header className="lg:hidden sticky top-0 z-40 h-14 border-b border-border-primary bg-bg-elevated/95 backdrop-blur supports-[backdrop-filter]:bg-bg-elevated/60">
+    <header className="lg:hidden sticky top-0 z-40 h-12 border-b border-border-primary bg-bg-primary/90 backdrop-blur">
       <div className="flex items-center justify-between h-full px-4">
-        <h1 className="text-lg font-bold tracking-tight text-text-primary">
+        <span className="text-[12px] font-medium tracking-[0.22em] text-text-primary">
           NEXUS
-        </h1>
-        
-        <div className="flex items-center gap-2">
+        </span>
+        <div className="flex items-center gap-1">
           <Button
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
             aria-label="Toggle theme"
+            className="h-9 w-9"
           >
             {resolvedTheme === "dark" ? (
-              <Sun className="h-5 w-5" />
+              <Sun className="h-4 w-4" />
             ) : (
-              <Moon className="h-5 w-5" />
+              <Moon className="h-4 w-4" />
             )}
           </Button>
-          
           <Button
             variant="ghost"
             size="icon"
             onClick={onCommandOpen}
             aria-label="Open command palette"
+            className="h-9 w-9"
           >
-            <Command className="h-5 w-5" />
+            <Command className="h-4 w-4" />
           </Button>
         </div>
       </div>

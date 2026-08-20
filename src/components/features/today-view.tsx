@@ -1,244 +1,459 @@
 "use client";
 
 import * as React from "react";
-import { Plus, PlayCircle, CheckCircle2, Clock } from "lucide-react";
+import { format } from "date-fns";
+import { Plus, PanelRightClose, PanelRightOpen } from "lucide-react";
 import { Button } from "@/components/primitives/button";
-import { TaskForm, type TaskFormData } from "./task-form";
 import { DayFlow } from "./day-flow";
-import { TaskItem } from "./task-item";
+import { TaskInspector } from "./task-inspector";
+import { ConflictDialog } from "./conflict-dialog";
+import { TaskList } from "./task-list";
 import { EmptyState } from "@/components/core/empty-state";
+import { SectionLabel } from "@/components/core/section-label";
+import { PageSkeleton } from "@/components/core/skeleton";
 import { useTaskStore } from "@/state/task-store";
+import { useUiStore } from "@/state/ui-store";
 import type { Task } from "@/domain/types";
-import { format, addMinutes } from "date-fns";
+import { computeDayMomentum, getTasksOnDay } from "@/domain/task/today";
+import { getCurrentTask } from "@/domain/task/current";
+import { getOverdueTasks } from "@/domain/task/overdue";
+import { detectConflicts, getScheduledInterval } from "@/domain/task/conflicts";
+import { dateFromMinutes, minutesFromMidnight, snapMinutes } from "@/domain/task/time";
+import type { UpdateTaskInput } from "@/domain/task/service";
+import { cn } from "@/lib/utils";
+import { useWorkspaceStore } from "@/state/workspace-store";
+import { resolveTaskContext } from "@/domain/relationships";
+import Link from "next/link";
 
 export function TodayView() {
-  const { tasks, setTasks, updateTask, addTask } = useTaskStore();
-  const [isTaskFormOpen, setIsTaskFormOpen] = React.useState(false);
-  const [selectedTask, setSelectedTask] = React.useState<Task | null>(null);
-  const [taskFormDefaults, setTaskFormDefaults] = React.useState<{ date?: Date; time?: string }>({});
+  const tasks = useTaskStore((state) => state.tasks);
+  const hydrated = useTaskStore((state) => state.hydrated);
+  const updateTask = useTaskStore((state) => state.updateTask);
+  const completeTask = useTaskStore((state) => state.completeTask);
+  const startTask = useTaskStore((state) => state.startTask);
+  const pauseTask = useTaskStore((state) => state.pauseTask);
+  const archiveTask = useTaskStore((state) => state.archiveTask);
+  const deleteTask = useTaskStore((state) => state.deleteTask);
+  const duplicateTask = useTaskStore((state) => state.duplicateTask);
+  const rescheduleTask = useTaskStore((state) => state.rescheduleTask);
+  const resizeTask = useTaskStore((state) => state.resizeTask);
 
-  // Load tasks on mount (in real app this would be server-side)
+  const openComposer = useUiStore((state) => state.openComposer);
+  const inspectorTaskId = useUiStore((state) => state.inspectorTaskId);
+  const inspectorCollapsed = useUiStore((state) => state.inspectorCollapsed);
+  const openInspector = useUiStore((state) => state.openInspector);
+  const closeInspector = useUiStore((state) => state.closeInspector);
+  const toggleInspectorCollapsed = useUiStore((state) => state.toggleInspectorCollapsed);
+  const granularity = useUiStore((state) => state.granularity);
+  const setGranularity = useUiStore((state) => state.setGranularity);
+  const pendingConflict = useUiStore((state) => state.pendingConflict);
+  const setPendingConflict = useUiStore((state) => state.setPendingConflict);
+
+  const [now, setNow] = React.useState(() => new Date());
   React.useEffect(() => {
-    const loadTasks = async () => {
-      // For now, using demo data. In production, this would call:
-      // const todayTasks = await TaskService.getTodayTasks(userId);
-      // setTasks(todayTasks);
-      
-      // Demo task
-      const demoTasks: Task[] = [];
-      setTasks(demoTasks);
-    };
-    
-    loadTasks();
-  }, [setTasks]);
+    const id = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(id);
+  }, []);
+  const today = React.useMemo(() => {
+    const d = new Date(now);
+    d.setHours(0, 0, 0, 0);
+    return d;
+  }, [now]);
+  const dayTasks = React.useMemo(() => getTasksOnDay(tasks, today), [tasks, today]);
+  const momentum = React.useMemo(() => computeDayMomentum(tasks, today), [tasks, today]);
+  const current = React.useMemo(() => getCurrentTask(dayTasks, now), [dayTasks, now]);
+  const overdue = React.useMemo(() => getOverdueTasks(tasks, today), [tasks, today]);
+  const inspectorTask = tasks.find((task) => task.id === inspectorTaskId) ?? null;
+  const projects = useWorkspaceStore((s) => s.projects);
+  const goals = useWorkspaceStore((s) => s.goals);
+  const milestones = useWorkspaceStore((s) => s.milestones);
+  const currentContext = current
+    ? resolveTaskContext(current, projects, milestones, goals)
+    : {};
 
-  const today = new Date();
-  const todayTasks = React.useMemo(() => {
-    return tasks.filter((task) => {
-      if (task.status === "completed" || task.status === "archived") return false;
-      const taskDate = task.startTime || task.scheduledDate || task.dueDate;
-      if (!taskDate) return false;
-      const date = new Date(taskDate);
-      return date.toDateString() === today.toDateString();
-    });
-  }, [tasks]);
-
-  const completedToday = todayTasks.filter((t) => t.status === "completed").length;
-  const totalToday = todayTasks.length;
-  const completionPercentage = totalToday > 0 ? Math.round((completedToday / totalToday) * 100) : 0;
-
-  // Get current task (most relevant right now)
-  const currentTask = React.useMemo(() => {
-    const now = new Date();
-    
-    // First: task currently in progress
-    const inProgress = todayTasks.find((t) => t.status === "in_progress");
-    if (inProgress) return inProgress;
-    
-    // Second: next ready task by priority
-    const readyTasks = todayTasks.filter((t) => t.status === "ready");
-    const sortedReady = readyTasks.sort((a, b) => {
-      const priorityOrder = { critical: 0, high: 1, medium: 2, low: 3 };
-      const aPriority = priorityOrder[a.priority];
-      const bPriority = priorityOrder[b.priority];
-      
-      if (aPriority !== bPriority) return aPriority - bPriority;
-      
-      if (a.startTime && b.startTime) {
-        return new Date(a.startTime).getTime() - new Date(b.startTime).getTime();
-      }
-      
-      return 0;
-    });
-    
-    return sortedReady[0] || null;
-  }, [todayTasks]);
-
-  const handleCreateTask = async (data: TaskFormData) => {
-    // In production, this would call TaskService.createTask
-    const newTask: Task = {
-      id: crypto.randomUUID(),
-      title: data.title,
-      description: data.description,
-      status: data.status || "inbox",
-      priority: data.priority || "medium",
-      dueDate: data.dueDate,
-      scheduledDate: data.scheduledDate,
-      startTime: data.startTime,
-      endTime: data.startTime && data.estimatedDuration
-        ? addMinutes(data.startTime, data.estimatedDuration)
-        : undefined,
-      estimatedDuration: data.estimatedDuration,
-      tags: [],
-      order: 0,
-      userId: "demo-user", // In production, get from auth
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    addTask(newTask);
-    setIsTaskFormOpen(false);
-    setTaskFormDefaults({});
-  };
-
-  const handleTaskComplete = async (taskId: string) => {
-    const task = tasks.find((t) => t.id === taskId);
-    if (!task) return;
-
-    if (task.status === "completed") {
-      updateTask(taskId, { status: "ready", completedAt: undefined });
-    } else {
-      updateTask(taskId, { status: "completed", completedAt: new Date() });
-    }
-  };
-
-  const handleEmptySlotClick = (time: Date) => {
-    setTaskFormDefaults({
-      date: time,
-      time: format(time, "HH:mm"),
-    });
-    setIsTaskFormOpen(true);
-  };
-
-  const greetingText = React.useMemo(() => {
+  const greeting = React.useMemo(() => {
     const hour = new Date().getHours();
     if (hour < 12) return "Good morning";
     if (hour < 18) return "Good afternoon";
     return "Good evening";
   }, []);
 
+  const proposeChange = (original: Task, proposed: Task, kind: "move" | "resize") => {
+    const conflicts = detectConflicts(proposed, tasks);
+    if (conflicts.length > 0) {
+      setPendingConflict({ taskId: original.id, proposed, conflicts, kind });
+      return;
+    }
+    void commitProposed(proposed, kind);
+  };
+
+  const commitProposed = async (proposed: Task, kind: "move" | "resize" | "create") => {
+    if (kind === "resize") {
+      await resizeTask(proposed.id, proposed.estimatedDuration ?? 30);
+    } else if (kind === "move" || kind === "create") {
+      if (proposed.startTime) {
+        await rescheduleTask(proposed.id, proposed.startTime);
+      }
+      if (proposed.estimatedDuration) {
+        await resizeTask(proposed.id, proposed.estimatedDuration);
+      }
+    }
+  };
+
+  const handleKeepOverlap = async () => {
+    if (!pendingConflict) return;
+    await commitProposed(pendingConflict.proposed, pendingConflict.kind);
+    setPendingConflict(null);
+  };
+
+  const handleCancelConflict = async () => {
+    if (!pendingConflict) return;
+    if (pendingConflict.kind === "create") {
+      await deleteTask(pendingConflict.taskId);
+    }
+    setPendingConflict(null);
+  };
+
+  const handleMoveLater = async () => {
+    if (!pendingConflict) return;
+    const latest = Math.max(
+      ...pendingConflict.conflicts.map((task) => {
+        const interval = getScheduledInterval(task);
+        return interval ? interval.end.getTime() : 0;
+      })
+    );
+    const start = new Date(latest);
+    const minutes = snapMinutes(minutesFromMidnight(start), granularity);
+    const snapped = dateFromMinutes(today, minutes);
+    await rescheduleTask(pendingConflict.taskId, snapped);
+    setPendingConflict(null);
+  };
+
+  const handleResizeToFit = async () => {
+    if (!pendingConflict) return;
+    const proposedStart = pendingConflict.proposed.startTime;
+    if (!proposedStart) {
+      setPendingConflict(null);
+      return;
+    }
+    const earliest = Math.min(
+      ...pendingConflict.conflicts.map((task) => {
+        const interval = getScheduledInterval(task);
+        return interval ? interval.start.getTime() : Number.MAX_SAFE_INTEGER;
+      })
+    );
+    const minutes = Math.floor((earliest - proposedStart.getTime()) / 60_000);
+    if (minutes < 15) {
+      await handleMoveLater();
+      return;
+    }
+    await resizeTask(pendingConflict.taskId, minutes);
+    setPendingConflict(null);
+  };
+
+  const handleInspectorChange = (updates: UpdateTaskInput) => {
+    if (!inspectorTask) return;
+    if (updates.estimatedDuration && inspectorTask.startTime) {
+      void resizeTask(inspectorTask.id, updates.estimatedDuration);
+      const rest = { ...updates };
+      delete rest.estimatedDuration;
+      if (Object.keys(rest).length > 0) void updateTask(inspectorTask.id, rest);
+      return;
+    }
+    void updateTask(inspectorTask.id, updates);
+  };
+
+  if (!hydrated) {
+    return <PageSkeleton />;
+  }
+
+  const inspectorOpen = Boolean(inspectorTask) && !inspectorCollapsed;
+
   return (
-    <div className="h-full flex flex-col">
-      {/* Header */}
-      <header className="border-b border-border-primary bg-bg-primary px-4 py-4 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-2xl lg:text-3xl font-bold text-text-primary mb-1">
-            {greetingText}
-          </h1>
-          <p className="text-sm text-text-secondary">
-            {format(today, "EEEE, MMMM d, yyyy")}
-          </p>
-        </div>
-      </header>
-
-      <div className="flex-1 overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4 py-6 lg:px-8 h-full">
-          {/* Stats */}
-          {totalToday > 0 && (
-            <div className="mb-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="bg-bg-elevated border border-border-primary rounded-lg p-4">
-                <div className="text-2xl font-bold text-text-primary">{completionPercentage}%</div>
-                <div className="text-xs text-text-secondary">Completed</div>
-              </div>
-              <div className="bg-bg-elevated border border-border-primary rounded-lg p-4">
-                <div className="text-2xl font-bold text-text-primary">{completedToday}</div>
-                <div className="text-xs text-text-secondary">Done</div>
-              </div>
-              <div className="bg-bg-elevated border border-border-primary rounded-lg p-4">
-                <div className="text-2xl font-bold text-text-primary">{totalToday - completedToday}</div>
-                <div className="text-xs text-text-secondary">Remaining</div>
-              </div>
-              <div className="bg-bg-elevated border border-border-primary rounded-lg p-4">
-                <div className="text-2xl font-bold text-text-primary">{totalToday}</div>
-                <div className="text-xs text-text-secondary">Total</div>
-              </div>
+    <div className="flex min-h-[calc(100vh-3.5rem)] lg:min-h-screen">
+      <div className="flex-1 min-w-0 flex flex-col">
+        <header className="px-5 pt-8 pb-4 lg:px-10 lg:pt-10">
+          <div className="flex items-start justify-between gap-4 max-w-3xl">
+            <div>
+              <p className="label-caps mb-2">{greeting}</p>
+              <h1 className="text-xl font-medium tracking-tight text-text-primary">
+                {format(today, "EEEE, d MMMM")}
+              </h1>
+              {momentum.totalCount > 0 && (
+                <p className="mt-3 text-sm text-text-secondary font-mono">
+                  <span className="text-text-primary">{momentum.completionPercentage}%</span>
+                  <span className="text-text-tertiary"> · </span>
+                  {momentum.completedCount} done
+                  <span className="text-text-tertiary"> · </span>
+                  {momentum.remainingCount} remaining
+                  <span className="text-text-tertiary"> · </span>
+                  {formatMinutes(momentum.focusMinutes)}
+                </p>
+              )}
             </div>
-          )}
-
-          {/* Current task */}
-          {currentTask && (
-            <div className="mb-6">
-              <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wide mb-3">
-                Currently
-              </h2>
-              <div className="bg-bg-elevated border-2 border-interactive-primary rounded-lg p-4">
-                <TaskItem
-                  task={currentTask}
-                  onClick={() => setSelectedTask(currentTask)}
-                  onComplete={() => handleTaskComplete(currentTask.id)}
-                />
-                <div className="mt-3 flex gap-2">
-                  <Button size="sm" variant="primary">
-                    <PlayCircle className="h-4 w-4 mr-2" />
-                    Start
-                  </Button>
-                  <Button size="sm" variant="secondary">
-                    <CheckCircle2 className="h-4 w-4 mr-2" />
-                    Complete
-                  </Button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Day Flow */}
-          <div className="mb-6">
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-sm font-semibold text-text-secondary uppercase tracking-wide">
-                Day Flow
-              </h2>
+            <div className="flex items-center gap-1">
+              <Button size="sm" variant="ghost" onClick={() => openComposer()} className="hidden sm:inline-flex">
+                <Plus className="h-4 w-4" />
+                Capture
+              </Button>
               <Button
-                size="sm"
-                onClick={() => setIsTaskFormOpen(true)}
+                variant="ghost"
+                size="icon"
+                className="hidden lg:inline-flex h-8 w-8"
+                onClick={toggleInspectorCollapsed}
+                aria-label={inspectorCollapsed ? "Show inspector" : "Hide inspector"}
               >
-                <Plus className="h-4 w-4 mr-2" />
-                Add task
+                {inspectorCollapsed ? (
+                  <PanelRightOpen className="h-4 w-4" />
+                ) : (
+                  <PanelRightClose className="h-4 w-4" />
+                )}
               </Button>
             </div>
+          </div>
+        </header>
 
-            {totalToday === 0 ? (
-              <EmptyState
-                icon={<Clock className="h-16 w-16" />}
-                title="Your day is clear"
-                description="Plan your day by creating tasks and scheduling them in the timeline."
-                action={
-                  <Button onClick={() => setIsTaskFormOpen(true)}>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Create first task
-                  </Button>
-                }
-              />
-            ) : (
-              <DayFlow
-                date={today}
-                tasks={tasks}
-                onTaskClick={(task) => setSelectedTask(task)}
-                onTaskComplete={handleTaskComplete}
-                onEmptySlotClick={handleEmptySlotClick}
-              />
+        <div className="flex-1 min-h-0 overflow-y-auto">
+          <div className="px-5 pb-10 lg:px-10 space-y-10 max-w-3xl">
+
+            {current && (
+              <section>
+                <SectionLabel>Now</SectionLabel>
+                <div className="pl-0">
+                  <h2 className="text-2xl font-medium tracking-tight text-text-primary leading-snug">
+                    {current.title}
+                  </h2>
+                  <p className="mt-2 text-sm text-text-secondary">
+                    {currentContext.project ? (
+                      <Link href={`/projects/${currentContext.project.id}`} className="hover:text-text-primary">
+                        {currentContext.project.name}
+                      </Link>
+                    ) : (
+                      <span>Unassigned</span>
+                    )}
+                    {currentContext.goal && (
+                      <>
+                        <span className="text-text-tertiary"> · </span>
+                        <Link href={`/goals/${currentContext.goal.id}`} className="hover:text-text-primary">
+                          {currentContext.goal.title}
+                        </Link>
+                      </>
+                    )}
+                  </p>
+                  <p className="mt-1 font-mono text-sm text-text-tertiary">
+                    {current.estimatedDuration ? `${current.estimatedDuration} min` : "—"}
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {current.status !== "in_progress" && current.status !== "completed" && (
+                      <Button size="sm" onClick={() => void startTask(current.id)}>
+                        Start
+                      </Button>
+                    )}
+                    {current.status === "in_progress" && (
+                      <Button size="sm" variant="secondary" onClick={() => void pauseTask(current.id)}>
+                        Pause
+                      </Button>
+                    )}
+                    {current.status !== "completed" && (
+                      <Button size="sm" variant="ghost" onClick={() => void completeTask(current.id)}>
+                        Complete
+                      </Button>
+                    )}
+                    <Button size="sm" variant="secondary" asChild>
+                      <Link href={`/focus?task=${current.id}`}>Focus</Link>
+                    </Button>
+                  </div>
+                </div>
+              </section>
+            )}
+
+            {overdue.length > 0 && (
+              <section>
+                <SectionLabel>Still open</SectionLabel>
+                <ul className="space-y-3">
+                  {overdue.map((task) => (
+                    <li key={task.id} className="flex items-baseline justify-between gap-3">
+                      <button
+                        type="button"
+                        className="text-left text-sm text-text-primary hover:text-interactive-primary"
+                        onClick={() => openInspector(task.id)}
+                      >
+                        {task.title}
+                      </button>
+                      <div className="flex gap-2 flex-shrink-0">
+                        <button
+                          type="button"
+                          className="text-xs text-text-tertiary hover:text-text-primary"
+                          onClick={() => void completeTask(task.id)}
+                        >
+                          Complete
+                        </button>
+                        <button
+                          type="button"
+                          className="text-xs text-text-tertiary hover:text-text-primary"
+                          onClick={() => void archiveTask(task.id)}
+                        >
+                          Archive
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
+
+            <section className="flex flex-col min-h-[32rem]">
+              <div className="flex items-center justify-between mb-4 gap-3">
+                <SectionLabel className="mb-0 flex-1">Today&apos;s flow</SectionLabel>
+                <div className="flex items-center gap-1">
+                  {([15, 30, 60] as const).map((value) => (
+                    <button
+                      key={value}
+                      type="button"
+                      onClick={() => setGranularity(value)}
+                      className={cn(
+                        "px-2 py-1 font-mono text-[11px] min-h-8 rounded-sm",
+                        granularity === value
+                          ? "text-text-primary bg-bg-tertiary"
+                          : "text-text-tertiary hover:text-text-primary"
+                      )}
+                    >
+                      {value}m
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {dayTasks.length === 0 ? (
+                <div className="flex flex-col flex-1 min-h-[28rem]">
+                  <EmptyState
+                    title="Your day is clear."
+                    description="Nothing needs your attention yet."
+                    action={
+                      <Button onClick={() => openComposer()} variant="secondary">
+                        Plan something
+                      </Button>
+                    }
+                  />
+                  <div className="flex-1 min-h-[18rem]">
+                    <DayFlow
+                      date={today}
+                      tasks={tasks}
+                      granularity={granularity}
+                      selectedTaskId={inspectorTaskId}
+                      onSelect={(task) => openInspector(task.id)}
+                      onOpen={(task) => openInspector(task.id)}
+                      onComplete={(task) => void completeTask(task.id)}
+                      onDelete={(task) => void deleteTask(task.id)}
+                      onDuplicate={(task) => void duplicateTask(task.id)}
+                      onMove={(task, proposed) => proposeChange(task, proposed, "move")}
+                      onResize={(task, proposed) => proposeChange(task, proposed, "resize")}
+                      onEmptySlotClick={(time) =>
+                        openComposer({ startTime: time, date: time, prompt: "What's happening?" })
+                      }
+                    />
+                  </div>
+                </div>
+              ) : (
+                <DayFlow
+                  date={today}
+                  tasks={tasks}
+                  granularity={granularity}
+                  selectedTaskId={inspectorTaskId}
+                  onSelect={(task) => openInspector(task.id)}
+                  onOpen={(task) => openInspector(task.id)}
+                  onComplete={(task) => void completeTask(task.id)}
+                  onDelete={(task) => void deleteTask(task.id)}
+                  onDuplicate={(task) => void duplicateTask(task.id)}
+                  onMove={(task, proposed) => proposeChange(task, proposed, "move")}
+                  onResize={(task, proposed) => proposeChange(task, proposed, "resize")}
+                  onEmptySlotClick={(time) =>
+                    openComposer({ startTime: time, date: time, prompt: "What's happening?" })
+                  }
+                  className="h-[36rem] lg:h-[42rem]"
+                />
+              )}
+            </section>
+
+            {dayTasks.filter((task) => !task.startTime && task.status !== "completed").length >
+              0 && (
+              <section>
+                <SectionLabel>Up next</SectionLabel>
+                <TaskList
+                  tasks={dayTasks.filter((task) => !task.startTime)}
+                  sort="priority"
+                  onOpen={(task) => openInspector(task.id)}
+                  onComplete={(task) => void completeTask(task.id)}
+                />
+              </section>
             )}
           </div>
         </div>
       </div>
 
-      {/* Task Form */}
-      <TaskForm
-        open={isTaskFormOpen}
-        onOpenChange={setIsTaskFormOpen}
-        onSubmit={handleCreateTask}
-        defaultDate={taskFormDefaults.date}
-        defaultTime={taskFormDefaults.time}
+      <aside
+        className={cn(
+          "hidden lg:flex flex-col w-80 flex-shrink-0 bg-bg-primary",
+          (!inspectorTask || inspectorCollapsed) && "lg:hidden"
+        )}
+      >
+        {inspectorTask && inspectorOpen && (
+          <TaskInspector
+            key={inspectorTask.id}
+            task={inspectorTask}
+            variant="panel"
+            onChange={handleInspectorChange}
+            onComplete={() => void completeTask(inspectorTask.id)}
+            onDelete={() => {
+              void deleteTask(inspectorTask.id);
+              closeInspector();
+            }}
+            onDuplicate={() => void duplicateTask(inspectorTask.id)}
+            onClose={closeInspector}
+          />
+        )}
+      </aside>
+
+      {inspectorTask && (
+        <div className="lg:hidden">
+          <button
+            type="button"
+            className="fixed inset-0 z-[1200] bg-bg-overlay"
+            aria-label="Close inspector"
+            onClick={closeInspector}
+          />
+          <TaskInspector
+            key={inspectorTask.id}
+            task={inspectorTask}
+            variant="sheet"
+            onChange={handleInspectorChange}
+            onComplete={() => void completeTask(inspectorTask.id)}
+            onDelete={() => {
+              void deleteTask(inspectorTask.id);
+              closeInspector();
+            }}
+            onDuplicate={() => void duplicateTask(inspectorTask.id)}
+            onClose={closeInspector}
+          />
+        </div>
+      )}
+
+      <ConflictDialog
+        conflict={pendingConflict}
+        onKeepOverlap={() => void handleKeepOverlap()}
+        onCancel={() => void handleCancelConflict()}
+        onMoveLater={() => void handleMoveLater()}
+        onResizeToFit={() => void handleResizeToFit()}
       />
     </div>
   );
+}
+
+function formatMinutes(minutes: number): string {
+  if (minutes <= 0) return "0m";
+  const hours = Math.floor(minutes / 60);
+  const rest = minutes % 60;
+  if (hours === 0) return `${rest}m`;
+  if (rest === 0) return `${hours}h`;
+  return `${hours}h ${rest}m`;
 }

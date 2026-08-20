@@ -31,100 +31,191 @@ export interface UserPreferences {
   language: string;
 }
 
+export const WEEK_STARTS = [0, 1, 6] as const;
+export type WeekStart = (typeof WEEK_STARTS)[number];
+
 /**
  * Task entity
- * Central to the NEXUS experience
+ * Central to the NEXUS experience — one model for Inbox, Today, and Day Flow
  */
 export interface Task extends BaseEntity {
   title: string;
   description?: string;
   status: TaskStatus;
   priority: TaskPriority;
-  dueDate?: Date;
-  scheduledDate?: Date;
-  startTime?: Date; // When task is scheduled to start
-  endTime?: Date; // When task is scheduled to end
   estimatedDuration?: number; // minutes
   actualDuration?: number; // minutes
+  dueDate?: Date;
+  scheduledDate?: Date;
+  startTime?: Date;
+  endTime?: Date;
   projectId?: string;
   goalId?: string;
-  parentTaskId?: string; // For subtasks
+  parentTaskId?: string;
   tags: string[];
-  order: number; // For manual sorting
+  recurrence?: TaskRecurrence;
+  reminder?: TaskReminder;
+  schedulingBehavior: SchedulingBehavior;
+  order: number;
   completedAt?: Date;
   userId: string;
-  isFlexible?: boolean; // Can be automatically rescheduled
-  recurrence?: TaskRecurrence; // For recurring tasks
 }
 
-export type TaskStatus = 
-  | "inbox"        // Unprocessed
-  | "planned"      // Scheduled but not ready
-  | "ready"        // Ready to work on
-  | "in_progress"  // Currently working
-  | "paused"       // Temporarily stopped
-  | "blocked"      // Cannot proceed
-  | "completed"    // Done
-  | "archived";    // Removed from active view
+export const TASK_STATUSES = [
+  "inbox",
+  "planned",
+  "ready",
+  "in_progress",
+  "paused",
+  "blocked",
+  "completed",
+  "archived",
+] as const;
 
-export type TaskPriority = "low" | "medium" | "high" | "critical";
+export type TaskStatus = (typeof TASK_STATUSES)[number];
+
+export const TASK_PRIORITIES = ["low", "medium", "high", "critical"] as const;
+
+export type TaskPriority = (typeof TASK_PRIORITIES)[number];
+
+export const SCHEDULING_BEHAVIORS = ["fixed", "flexible"] as const;
+
+export type SchedulingBehavior = (typeof SCHEDULING_BEHAVIORS)[number];
 
 export interface TaskRecurrence {
   frequency: "daily" | "weekly" | "monthly" | "yearly";
-  interval: number; // Every N days/weeks/etc
+  interval: number;
   endDate?: Date;
-  daysOfWeek?: number[]; // For weekly: 0-6
+  daysOfWeek?: number[];
+}
+
+export interface TaskReminder {
+  enabled: boolean;
+  remindAt?: Date;
+  offsetMinutes?: number;
 }
 
 /**
  * Project entity
- * Groups related tasks
+ * "What am I building?" — may stand alone or belong to a Goal / Milestone.
  */
 export interface Project extends BaseEntity {
   name: string;
   description?: string;
-  color?: string;
-  icon?: string;
   status: ProjectStatus;
+  priority: TaskPriority;
+  goalId?: string;
+  milestoneId?: string;
   startDate?: Date;
-  targetEndDate?: Date;
-  actualEndDate?: Date;
-  goalId?: string; // Projects can contribute to goals
+  targetDate?: Date;
+  completedAt?: Date;
+  icon?: string;
+  accent?: AccentToken;
+  tags: string[];
+  order: number;
   userId: string;
 }
 
-export type ProjectStatus = "active" | "on_hold" | "completed" | "archived";
+export const PROJECT_STATUSES = [
+  "planned",
+  "active",
+  "paused",
+  "completed",
+  "archived",
+] as const;
+
+export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
 
 /**
  * Goal entity
- * Long-term objectives
+ * "Why am I doing it?"
+ * Progress is calculated from the hierarchy, not stored as source of truth.
  */
 export interface Goal extends BaseEntity {
   title: string;
   description?: string;
-  category?: string;
   status: GoalStatus;
+  priority: TaskPriority;
   targetDate?: Date;
-  progress: number; // 0-100
+  completedAt?: Date;
+  icon?: string;
+  accent?: AccentToken;
+  parentGoalId?: string;
   userId: string;
 }
 
-export type GoalStatus = "active" | "completed" | "abandoned";
+export const GOAL_STATUSES = [
+  "draft",
+  "active",
+  "paused",
+  "completed",
+  "archived",
+] as const;
+
+export type GoalStatus = (typeof GOAL_STATUSES)[number];
 
 /**
  * Milestone entity
- * Key checkpoints for goals/projects
+ * A checkpoint on a Goal. May contain multiple Projects.
  */
 export interface Milestone extends BaseEntity {
   title: string;
   description?: string;
+  status: MilestoneStatus;
+  goalId: string;
   targetDate?: Date;
   completedAt?: Date;
-  projectId?: string;
-  goalId?: string;
   order: number;
   userId: string;
 }
+
+export const MILESTONE_STATUSES = [
+  "planned",
+  "active",
+  "completed",
+  "archived",
+] as const;
+
+export type MilestoneStatus = (typeof MILESTONE_STATUSES)[number];
+
+export const ACCENT_TOKENS = [
+  "purple",
+  "pink",
+  "orange",
+  "teal",
+  "indigo",
+] as const;
+
+export type AccentToken = (typeof ACCENT_TOKENS)[number];
+
+/**
+ * Lightweight activity event for project/goal feeds.
+ * Never fabricated — recorded from real mutations.
+ */
+export interface ActivityEvent {
+  id: string;
+  type: ActivityType;
+  entityType: "goal" | "milestone" | "project" | "task";
+  entityId: string;
+  message: string;
+  createdAt: Date;
+}
+
+export const ACTIVITY_TYPES = [
+  "goal_created",
+  "goal_completed",
+  "goal_updated",
+  "milestone_created",
+  "milestone_completed",
+  "project_created",
+  "project_completed",
+  "project_updated",
+  "task_added",
+  "task_completed",
+  "deadline_changed",
+] as const;
+
+export type ActivityType = (typeof ACTIVITY_TYPES)[number];
 
 /**
  * Tag entity
@@ -138,20 +229,22 @@ export interface Tag extends BaseEntity {
 
 /**
  * Note entity
- * Quick capture and reference
+ * Lightweight contextual knowledge — not a document editor.
  */
 export interface Note extends BaseEntity {
   title?: string;
   content: string;
   taskId?: string;
   projectId?: string;
+  goalId?: string;
   tags: string[];
+  archived: boolean;
   userId: string;
 }
 
 /**
  * Calendar Event entity
- * Time-blocked events
+ * Time-blocked appointments. Tasks with startTime also appear on the calendar.
  */
 export interface CalendarEvent extends BaseEntity {
   title: string;
@@ -161,25 +254,71 @@ export interface CalendarEvent extends BaseEntity {
   location?: string;
   isAllDay: boolean;
   taskId?: string;
+  schedulingBehavior: SchedulingBehavior;
   userId: string;
 }
 
+export const FOCUS_SESSION_STATUSES = [
+  "active",
+  "paused",
+  "completed",
+  "abandoned",
+] as const;
+
+export type FocusSessionStatus = (typeof FOCUS_SESSION_STATUSES)[number];
+
 /**
  * Focus Session entity
- * Tracks focused work periods
+ * Real elapsed time only. Interruptions increment on pause.
  */
 export interface FocusSession extends BaseEntity {
   taskId?: string;
   projectId?: string;
+  goalId?: string;
   startTime: Date;
   endTime?: Date;
-  duration?: number; // minutes
+  duration?: number;
+  accumulatedMs: number;
+  lastResumeAt?: Date;
+  pausedAt?: Date;
+  interruptions: number;
+  status: FocusSessionStatus;
   quality?: FocusQuality;
   notes?: string;
   userId: string;
 }
 
 export type FocusQuality = "excellent" | "good" | "fair" | "poor";
+
+export interface WeeklyReview extends BaseEntity {
+  weekStart: Date;
+  weekEnd: Date;
+  workedWell: string;
+  didntWork: string;
+  shouldChange: string;
+  userId: string;
+}
+
+export interface AppSettings {
+  profileName: string;
+  startOfWeek: WeekStart;
+  timeFormat: "12h" | "24h";
+  defaultDurationMinutes: number;
+  dayStartHour: number;
+  dayEndHour: number;
+  defaultReminderOffsetMinutes: number;
+  notifications: {
+    enabled: boolean;
+    taskReminders: boolean;
+    deadlines: boolean;
+    focus: boolean;
+    weeklyReview: boolean;
+  };
+  focus: FocusSettings;
+  privacy: PrivacySettings;
+  onboardingCompleted: boolean;
+  triggeredReminderKeys: string[];
+}
 
 /**
  * Reminder entity
@@ -195,7 +334,7 @@ export interface Reminder extends BaseEntity {
 
 /**
  * Task History entity
- * Audit trail for task changes
+ * Audit trail for task changes — used by future Insights
  */
 export interface TaskHistory extends BaseEntity {
   taskId: string;
@@ -204,13 +343,20 @@ export interface TaskHistory extends BaseEntity {
   userId: string;
 }
 
-export type TaskHistoryAction =
-  | "created"
-  | "updated"
-  | "completed"
-  | "reopened"
-  | "archived"
-  | "deleted";
+export const TASK_HISTORY_ACTIONS = [
+  "created",
+  "updated",
+  "rescheduled",
+  "priority_changed",
+  "started",
+  "paused",
+  "completed",
+  "reopened",
+  "archived",
+  "deleted",
+] as const;
+
+export type TaskHistoryAction = (typeof TASK_HISTORY_ACTIONS)[number];
 
 /**
  * Notification entity
@@ -262,4 +408,17 @@ export interface FocusSettings {
 export interface PrivacySettings {
   analyticsEnabled: boolean;
   crashReportsEnabled: boolean;
+}
+
+/**
+ * Pending mutation prepared for future synchronization.
+ * Local-first writes always succeed; these records are the sync ledger.
+ */
+export interface PendingMutation {
+  id: string;
+  operation: "create" | "update" | "delete" | "complete" | "reschedule";
+  taskId: string;
+  payload: Record<string, unknown>;
+  createdAt: Date;
+  status: "pending" | "synced" | "failed";
 }

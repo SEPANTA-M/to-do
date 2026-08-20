@@ -73,6 +73,18 @@ const config: Config = {
         },
       },
       
+      fontFamily: {
+        sans: [
+          "Segoe UI Variable Text",
+          "Segoe UI",
+          "SF Pro Text",
+          "Helvetica Neue",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+        mono: ["SF Mono", "Cascadia Mono", "Consolas", "Menlo", "ui-monospace", "monospace"],
+      },
       borderRadius: {
         sm: "var(--radius-sm)",
         DEFAULT: "var(--radius-base)",
@@ -108,14 +120,14 @@ const config: Config = {
       
       transitionDuration: {
         instant: "50ms",
-        fast: "150ms",
-        DEFAULT: "250ms",
-        slow: "350ms",
-        slower: "500ms",
+        fast: "140ms",
+        DEFAULT: "220ms",
+        slow: "360ms",
+        slower: "450ms",
       },
       
       transitionTimingFunction: {
-        DEFAULT: "cubic-bezier(0.4, 0, 0.2, 1)",
+        DEFAULT: "cubic-bezier(0.22, 1, 0.36, 1)",
       },
       
       keyframes: {
