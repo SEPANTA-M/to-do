@@ -1,6 +1,7 @@
 "use client";
 
 import type { Goal, Milestone, Project } from "@/domain/types";
+import { useT } from "@/i18n/use-t";
 import { Label } from "@/components/primitives/label";
 import {
   Select,
@@ -35,6 +36,7 @@ export function HierarchyPicker({
   allowEmptyProject?: boolean;
   showProject?: boolean;
 }) {
+  const t = useT();
   const visibleGoals = goals.filter((goal) => goal.status !== "archived");
   const visibleMilestones = milestones.filter(
     (milestone) =>
@@ -84,13 +86,13 @@ export function HierarchyPicker({
   return (
     <div className="space-y-3">
       <div className="space-y-2">
-        <Label>Goal</Label>
+        <Label>{t("field.goal")}</Label>
         <Select value={value.goalId ?? NONE} onValueChange={selectGoal}>
           <SelectTrigger>
             <SelectValue placeholder="None" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NONE}>None</SelectItem>
+            <SelectItem value={NONE}>{t("field.none")}</SelectItem>
             {visibleGoals.map((goal) => (
               <SelectItem key={goal.id} value={goal.id}>
                 {goal.title}
@@ -100,7 +102,7 @@ export function HierarchyPicker({
         </Select>
       </div>
       <div className="space-y-2">
-        <Label>Milestone</Label>
+        <Label>{t("field.milestone")}</Label>
         <Select
           value={value.milestoneId ?? NONE}
           onValueChange={selectMilestone}
@@ -110,7 +112,7 @@ export function HierarchyPicker({
             <SelectValue placeholder="None" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={NONE}>None</SelectItem>
+            <SelectItem value={NONE}>{t("field.none")}</SelectItem>
             {visibleMilestones.map((milestone) => (
               <SelectItem key={milestone.id} value={milestone.id}>
                 {milestone.title}
@@ -130,7 +132,7 @@ export function HierarchyPicker({
             <SelectValue placeholder={allowEmptyProject ? "None" : "Select"} />
           </SelectTrigger>
           <SelectContent>
-            {allowEmptyProject && <SelectItem value={NONE}>None</SelectItem>}
+            {allowEmptyProject && <SelectItem value={NONE}>{t("field.none")}</SelectItem>}
             {visibleProjects.map((project) => (
               <SelectItem key={project.id} value={project.id}>
                 {project.name}

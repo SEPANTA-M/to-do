@@ -19,6 +19,7 @@ import { detectConflicts } from "@/domain/task/conflicts";
 import { useWorkspaceStore } from "@/state/workspace-store";
 import { recordActivity } from "@/domain/activity";
 import { cn } from "@/lib/utils";
+import { useT } from "@/i18n/use-t";
 
 interface AppShellProps {
   children: React.ReactNode;
@@ -37,6 +38,7 @@ export function AppShell({ children }: AppShellProps) {
   const error = useTaskStore((state) => state.error);
   const retryPersist = useTaskStore((state) => state.retryPersist);
   const immersive = pathname === "/focus";
+  const t = useT();
 
   return (
     <TaskProvider>
@@ -50,8 +52,8 @@ export function AppShell({ children }: AppShellProps) {
                 immersive
                   ? ""
                   : sidebarCollapsed
-                    ? "lg:pl-14 transition-[padding] duration-base"
-                    : "lg:pl-[13.75rem] transition-[padding] duration-base"
+                    ? "lg:ps-14 transition-[padding] duration-base"
+                    : "lg:ps-[13.75rem] transition-[padding] duration-base"
               )}
             >
               {!immersive && <Header onCommandOpen={() => setCommandOpen(true)} />}
@@ -62,9 +64,9 @@ export function AppShell({ children }: AppShellProps) {
                     role="alert"
                     className="mx-4 mt-3 lg:mx-8 rounded border border-status-error/25 bg-status-error-subtle px-3 py-2 text-sm text-text-primary flex items-center justify-between gap-3"
                   >
-                    <span>Unable to save changes. Your local changes are safe.</span>
+                    <span>{t("save.failed")}</span>
                     <Button size="sm" variant="secondary" onClick={() => void retryPersist()}>
-                      Retry
+                      {t("action.retry")}
                     </Button>
                   </div>
                 )}

@@ -3,6 +3,7 @@
 import { Command, Moon, Sun } from "lucide-react";
 import { Button } from "@/components/primitives/button";
 import { useThemeStore } from "@/state/theme-store";
+import { useT } from "@/i18n/use-t";
 
 interface HeaderProps {
   onCommandOpen: () => void;
@@ -10,6 +11,7 @@ interface HeaderProps {
 
 export function Header({ onCommandOpen }: HeaderProps) {
   const { resolvedTheme, setTheme } = useThemeStore();
+  const t = useT();
 
   const toggleTheme = () => {
     setTheme(resolvedTheme === "dark" ? "light" : "dark");
@@ -26,7 +28,7 @@ export function Header({ onCommandOpen }: HeaderProps) {
             variant="ghost"
             size="icon"
             onClick={toggleTheme}
-            aria-label="Toggle theme"
+            aria-label={t("theme.toggle")}
             className="h-9 w-9"
           >
             {resolvedTheme === "dark" ? (
@@ -39,7 +41,7 @@ export function Header({ onCommandOpen }: HeaderProps) {
             variant="ghost"
             size="icon"
             onClick={onCommandOpen}
-            aria-label="Open command palette"
+            aria-label={t("command.open")}
             className="h-9 w-9"
           >
             <Command className="h-4 w-4" />

@@ -1,43 +1,37 @@
 @import "tailwindcss";
 
 /**
- * NEXUS Spatial UI
- * Semantic tokens. Components consume these — not raw palettes.
+ * NEXUS — opaque light/dark. No glass.
  */
 
 @layer base {
   :root {
-    /* Canvas / surfaces — warm paper, not template-white */
-    --bg-primary: 40 14% 96.5%;
-    --bg-secondary: 40 12% 94.5%;
-    --bg-tertiary: 40 10% 91.5%;
-    --bg-elevated: 40 18% 98%;
-    --bg-field: 40 16% 91%;
-    --bg-overlay: 210 20% 8%;
+    --bg-primary: 0 0% 100%;
+    --bg-secondary: 0 0% 96%;
+    --bg-tertiary: 0 0% 92%;
+    --bg-elevated: 0 0% 100%;
+    --bg-field: 0 0% 94%;
+    --bg-overlay: 0 0% 0%;
     color-scheme: light;
 
-    /* Text */
-    --text-primary: 210 16% 12%;
-    --text-secondary: 210 8% 38%;
-    --text-tertiary: 210 7% 52%;
-    --text-disabled: 210 6% 70%;
-    --text-inverse: 40 20% 98%;
+    --text-primary: 0 0% 8%;
+    --text-secondary: 0 0% 32%;
+    --text-tertiary: 0 0% 46%;
+    --text-disabled: 0 0% 68%;
+    --text-inverse: 0 0% 100%;
 
-    /* Borders */
-    --border-primary: 40 8% 86%;
-    --border-secondary: 40 8% 80%;
+    --border-primary: 0 0% 86%;
+    --border-secondary: 0 0% 78%;
     --border-focus: 172 38% 28%;
-    --border-hover: 40 8% 76%;
+    --border-hover: 0 0% 70%;
 
-    /* Accent — ink teal, not SaaS blue */
     --interactive-primary: 172 38% 28%;
     --interactive-primary-hover: 172 38% 24%;
     --interactive-primary-active: 172 40% 20%;
-    --interactive-secondary: 40 10% 91%;
-    --interactive-secondary-hover: 40 10% 87%;
-    --interactive-secondary-active: 40 10% 83%;
+    --interactive-secondary: 0 0% 94%;
+    --interactive-secondary-hover: 0 0% 90%;
+    --interactive-secondary-active: 0 0% 86%;
 
-    /* Status — muted, not neon */
     --status-success: 152 28% 32%;
     --status-success-subtle: 152 20% 94%;
     --status-warning: 32 50% 42%;
@@ -47,7 +41,6 @@
     --status-info: 200 28% 38%;
     --status-info-subtle: 200 24% 95%;
 
-    /* Accents for identity, used sparingly */
     --accent-purple: 270 22% 46%;
     --accent-purple-subtle: 270 18% 95%;
     --accent-pink: 340 24% 48%;
@@ -71,31 +64,31 @@
   }
 
   .dark {
-    --bg-primary: 210 16% 6.5%;
-    --bg-secondary: 210 14% 8.5%;
-    --bg-tertiary: 210 12% 11%;
-    --bg-elevated: 210 14% 10%;
-    --bg-field: 210 16% 5%;
-    --bg-overlay: 210 20% 2%;
+    --bg-primary: 0 0% 0%;
+    --bg-secondary: 0 0% 7%;
+    --bg-tertiary: 0 0% 12%;
+    --bg-elevated: 0 0% 8%;
+    --bg-field: 0 0% 4%;
+    --bg-overlay: 0 0% 0%;
     color-scheme: dark;
 
-    --text-primary: 40 12% 94%;
-    --text-secondary: 210 8% 68%;
-    --text-tertiary: 210 7% 52%;
-    --text-disabled: 210 6% 36%;
-    --text-inverse: 210 16% 8%;
+    --text-primary: 0 0% 96%;
+    --text-secondary: 0 0% 72%;
+    --text-tertiary: 0 0% 55%;
+    --text-disabled: 0 0% 38%;
+    --text-inverse: 0 0% 0%;
 
-    --border-primary: 210 10% 16%;
-    --border-secondary: 210 10% 20%;
+    --border-primary: 0 0% 18%;
+    --border-secondary: 0 0% 24%;
     --border-focus: 172 40% 52%;
-    --border-hover: 210 10% 24%;
+    --border-hover: 0 0% 30%;
 
     --interactive-primary: 172 42% 52%;
     --interactive-primary-hover: 172 42% 58%;
     --interactive-primary-active: 172 40% 46%;
-    --interactive-secondary: 210 12% 14%;
-    --interactive-secondary-hover: 210 12% 18%;
-    --interactive-secondary-active: 210 12% 22%;
+    --interactive-secondary: 0 0% 14%;
+    --interactive-secondary-hover: 0 0% 18%;
+    --interactive-secondary-active: 0 0% 22%;
 
     --status-success: 152 28% 52%;
     --status-success-subtle: 152 18% 12%;
@@ -123,17 +116,19 @@
   }
 
   html {
-    font-family: "Segoe UI Variable Text", "Segoe UI", "SF Pro Text", "Helvetica Neue",
+    font-family: "Segoe UI Variable Text", "Segoe UI", "Tahoma", "Helvetica Neue",
       ui-sans-serif, system-ui, sans-serif;
+  }
+
+  html[dir="rtl"] {
+    font-family: Tahoma, "Segoe UI", Arial, ui-sans-serif, system-ui, sans-serif;
   }
 
   body {
     background-color: hsl(var(--bg-primary));
     color: hsl(var(--text-primary));
-    font-feature-settings: "ss01" 1, "kern" 1, "tnum" 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    letter-spacing: -0.011em;
   }
 
   input,
@@ -175,6 +170,11 @@
     color: hsl(var(--text-tertiary));
   }
 
+  html[dir="rtl"] .label-caps {
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
   .hairline {
     height: 1px;
     background: hsl(var(--border-primary));
@@ -192,14 +192,9 @@
     background: hsl(var(--bg-elevated));
   }
 
-  .surface-glass {
-    background: hsl(var(--bg-elevated) / 0.88);
-    backdrop-filter: blur(18px);
-    -webkit-backdrop-filter: blur(18px);
-  }
-
   .field-well {
-    background: hsl(var(--bg-primary));
+    background: hsl(var(--bg-field));
+    color: hsl(var(--text-primary));
   }
 
   .task-complete {

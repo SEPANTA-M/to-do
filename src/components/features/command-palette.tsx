@@ -29,6 +29,7 @@ import { useNotesStore } from "@/state/notes-store";
 import { useCalendarStore } from "@/state/calendar-store";
 import { useUiStore } from "@/state/ui-store";
 import { searchAll } from "@/domain/search";
+import { useT } from "@/i18n/use-t";
 
 interface CommandPaletteProps {
   open: boolean;
@@ -39,6 +40,7 @@ interface CommandPaletteProps {
 export function CommandPalette({ open, onOpenChange, onNewTask }: CommandPaletteProps) {
   const router = useRouter();
   const { theme, setTheme } = useThemeStore();
+  const t = useT();
   const [search, setSearch] = React.useState("");
   const goals = useWorkspaceStore((s) => s.goals);
   const projects = useWorkspaceStore((s) => s.projects);
@@ -105,25 +107,25 @@ export function CommandPalette({ open, onOpenChange, onNewTask }: CommandPalette
           <CommandPrimitive.Input
             value={search}
             onValueChange={setSearch}
-            placeholder="Search or jump…"
+            placeholder={t("command.search")}
             className="flex h-11 w-full bg-transparent text-sm outline-none placeholder:text-text-tertiary"
           />
         </div>
 
         <CommandPrimitive.List className="max-h-[400px] overflow-y-auto p-2">
           <CommandPrimitive.Empty className="py-6 text-center text-sm text-text-secondary">
-            No results found.
+            {t("command.empty")}
           </CommandPrimitive.Empty>
 
           <CommandPrimitive.Group heading="Create" className="mb-2">
-            <CommandGroupHeading>Create</CommandGroupHeading>
+            <CommandGroupHeading>{t("command.create")}</CommandGroupHeading>
             <CommandItem onSelect={() => runCommand(() => (onNewTask ? onNewTask() : openComposer()))}>
               <Plus className="mr-2 h-4 w-4" />
-              New task
+              {t("action.newTask")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/notes"))}>
               <StickyNote className="mr-2 h-4 w-4" />
-              Create note
+              {t("action.createNote")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/calendar"))}>
               <Calendar className="mr-2 h-4 w-4" />
@@ -212,65 +214,65 @@ export function CommandPalette({ open, onOpenChange, onNewTask }: CommandPalette
           )}
 
           <CommandPrimitive.Group heading="Navigation" className="mb-2">
-            <CommandGroupHeading>Navigation</CommandGroupHeading>
+            <CommandGroupHeading>{t("command.navigation")}</CommandGroupHeading>
             <CommandItem onSelect={() => runCommand(() => router.push("/"))}>
               <Inbox className="mr-2 h-4 w-4" />
-              Today
+              {t("nav.today")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/tasks"))}>
               <ListTodo className="mr-2 h-4 w-4" />
-              All Tasks
+              {t("command.allTasks")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/projects"))}>
               <FolderKanban className="mr-2 h-4 w-4" />
-              Projects
+              {t("nav.projects")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/goals"))}>
               <Target className="mr-2 h-4 w-4" />
-              Goals
+              {t("nav.goals")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/focus"))}>
               <Zap className="mr-2 h-4 w-4" />
-              Focus
+              {t("nav.focus")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/calendar"))}>
               <Calendar className="mr-2 h-4 w-4" />
-              Calendar
+              {t("nav.calendar")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/life-map"))}>
               <Map className="mr-2 h-4 w-4" />
-              Life map
+              {t("nav.lifeMap")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/insights"))}>
               <BarChart3 className="mr-2 h-4 w-4" />
-              Insights
+              {t("nav.insights")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/review"))}>
               <ClipboardCheck className="mr-2 h-4 w-4" />
-              Weekly review
+              {t("nav.review")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/notes"))}>
               <StickyNote className="mr-2 h-4 w-4" />
-              Notes
+              {t("nav.notes")}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => router.push("/settings"))}>
               <Settings className="mr-2 h-4 w-4" />
-              Settings
+              {t("nav.settings")}
             </CommandItem>
           </CommandPrimitive.Group>
 
           <CommandPrimitive.Separator className="h-[1px] bg-border-primary my-2" />
 
           <CommandPrimitive.Group heading="Theme">
-            <CommandGroupHeading>Theme</CommandGroupHeading>
+            <CommandGroupHeading>{t("command.theme")}</CommandGroupHeading>
             <CommandItem onSelect={() => runCommand(() => setTheme("light"))}>
               <Sun className="mr-2 h-4 w-4" />
-              Light
+              {t("settings.light")}
               {theme === "light" && <span className="ml-auto text-xs">✓</span>}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => setTheme("dark"))}>
               <Moon className="mr-2 h-4 w-4" />
-              Dark
+              {t("settings.dark")}
               {theme === "dark" && <span className="ml-auto text-xs">✓</span>}
             </CommandItem>
             <CommandItem onSelect={() => runCommand(() => setTheme("system"))}>

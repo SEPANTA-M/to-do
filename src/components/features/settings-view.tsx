@@ -15,9 +15,15 @@ import { useCalendarStore } from "@/state/calendar-store";
 import { useFocusStore } from "@/state/focus-store";
 import { createBackup, mergeBackup, parseBackup, tasksToCsv } from "@/domain/export/backup";
 import type { AppSettings } from "@/domain/types";
+import { useT } from "@/i18n/use-t";
+import { useLocaleStore } from "@/state/locale-store";
+import type { Locale } from "@/i18n/dictionary";
 
 export function SettingsView() {
   const { theme, setTheme } = useThemeStore();
+  const t = useT();
+  const locale = useLocaleStore((s) => s.locale);
+  const setLocale = useLocaleStore((s) => s.setLocale);
   const settings = useSettingsStore((s) => s.settings);
   const hydrated = useSettingsStore((s) => s.hydrated);
   const updateSettings = useSettingsStore((s) => s.updateSettings);
@@ -132,29 +138,44 @@ export function SettingsView() {
   return (
     <div className="container max-w-3xl mx-auto px-5 py-10 space-y-12">
       <div>
-        <p className="label-caps mb-2">Settings</p>
-        <h1 className="text-xl font-medium tracking-tight text-text-primary">This device</h1>
+        <p className="label-caps mb-2">{t("settings.title")}</p>
+        <h1 className="text-xl font-medium tracking-tight text-text-primary">{t("settings.device")}</h1>
       </div>
 
       <section>
-        <SectionLabel>Appearance</SectionLabel>
+        <SectionLabel>{t("settings.language")}</SectionLabel>
         <div className="flex flex-wrap gap-2">
-          {(["light", "dark", "system"] as const).map((value) => (
-            <Button key={value} size="sm" variant={theme === value ? "primary" : "secondary"} onClick={() => setTheme(value)}>
-              {value}
+          {(["fa", "en"] as Locale[]).map((value) => (
+            <Button
+              key={value}
+              size="sm"
+              variant={locale === value ? "primary" : "secondary"}
+              onClick={() => setLocale(value)}
+            >
+              {value === "fa" ? t("settings.persian") : t("settings.english")}
             </Button>
           ))}
         </div>
-        <p className="mt-3 text-sm text-text-secondary">Accent is the ink teal of the Spatial UI. It is not a theme preset.</p>
+      </section>
+
+      <section>
+        <SectionLabel>{t("settings.appearance")}</SectionLabel>
+        <div className="flex flex-wrap gap-2">
+          {(["light", "dark", "system"] as const).map((value) => (
+            <Button key={value} size="sm" variant={theme === value ? "primary" : "secondary" } onClick={() => setTheme(value)}>
+              {t(`settings.${value}`)}
+            </Button>
+          ))}
+        </div>
       </section>
 
       <section className="space-y-3">
-        <SectionLabel>Account</SectionLabel>
+        <SectionLabel>{t("settings.account")}</SectionLabel>
         <p className="text-sm text-text-secondary leading-relaxed">
-          NEXUS is local-first. There is no cloud login on this build. Your work stays on this device. A display name is optional.
+          {t("settings.accountHint")}
         </p>
         <div className="space-y-1.5 max-w-sm">
-          <Label htmlFor="profile">Display name</Label>
+          <Label htmlFor="profile">{t("settings.displayName")}</Label>
           <Input
             id="profile"
             value={settings.profileName}
@@ -165,7 +186,7 @@ export function SettingsView() {
       </section>
 
       <section className="space-y-4">
-        <SectionLabel>Productivity</SectionLabel>
+        <SectionLabel>{t("settings.productivity")}</SectionLabel>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-xl">
           <Field label="Default duration (min)">
             <Input
@@ -227,7 +248,7 @@ export function SettingsView() {
       </section>
 
       <section className="space-y-3">
-        <SectionLabel>Notifications</SectionLabel>
+        <SectionLabel>{t("settings.notifications")}</SectionLabel>
         <p className="text-sm text-text-secondary">
           Permission is requested only when you turn this on. NEXUS will not send a digest you did not enable.
         </p>
@@ -264,7 +285,7 @@ export function SettingsView() {
       </section>
 
       <section>
-        <SectionLabel>Keyboard</SectionLabel>
+        <SectionLabel>{t("settings.keyboard")}</SectionLabel>
         <ul className="text-sm text-text-secondary space-y-1 font-mono">
           <li>N — new task</li>
           <li>⌘/Ctrl+K — command palette</li>
@@ -274,7 +295,7 @@ export function SettingsView() {
       </section>
 
       <section className="space-y-3">
-        <SectionLabel>Privacy</SectionLabel>
+        <SectionLabel>{t("settings.privacy")}</SectionLabel>
         <p className="text-sm text-text-secondary">
           Analytics and crash reporting are off. This build does not send your tasks anywhere.
         </p>
@@ -295,7 +316,7 @@ export function SettingsView() {
       </section>
 
       <section className="space-y-3">
-        <SectionLabel>Data</SectionLabel>
+        <SectionLabel>{t("settings.data")}</SectionLabel>
         <p className="text-sm text-text-secondary">
           Export is a portable JSON snapshot. Import never overwrites existing items — duplicates are skipped.
         </p>
@@ -323,7 +344,7 @@ export function SettingsView() {
       </section>
 
       <section>
-        <SectionLabel>Sync</SectionLabel>
+        <SectionLabel>{t("settings.sync")}</SectionLabel>
         <p className="text-sm text-text-secondary leading-relaxed">
           Cloud sync is not configured. A mutation ledger is recorded locally for a future worker. Pending local changes are never discarded.
         </p>
@@ -364,7 +385,7 @@ function Toggle({
         className={`relative h-6 w-10 rounded-full transition-colors ${checked ? "bg-interactive-primary" : "bg-bg-tertiary"}`}
       >
         <span
-          className={`absolute top-0.5 h-5 w-5 rounded-full bg-bg-elevated transition-transform ${checked ? "left-4" : "left-0.5"}`}
+          className={`absolute top-0.5 start-0.5 h-5 w-5 rounded-full bg-bg-elevated transition-transform ${checked ? "translate-x-4 rtl:-translate-x-4" : ""}`}
         />
       </button>
     </label>

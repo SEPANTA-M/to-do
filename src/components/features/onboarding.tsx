@@ -7,6 +7,7 @@ import { useSettingsStore } from "@/state/settings-store";
 import { useUiStore } from "@/state/ui-store";
 import { useTaskStore } from "@/state/task-store";
 import { useWorkspaceStore } from "@/state/workspace-store";
+import { useT } from "@/i18n/use-t";
 
 export function Onboarding() {
   const settings = useSettingsStore((s) => s.settings);
@@ -17,6 +18,7 @@ export function Onboarding() {
   const projects = useWorkspaceStore((s) => s.projects);
   const goals = useWorkspaceStore((s) => s.goals);
   const router = useRouter();
+  const t = useT();
   const [dismissed, setDismissed] = React.useState(false);
 
   const hasTask = tasks.length > 0;
@@ -34,29 +36,29 @@ export function Onboarding() {
 
   return (
     <section className="mx-5 mt-4 lg:mx-10 max-w-3xl border border-border-primary rounded-md px-4 py-4 bg-bg-elevated">
-      <p className="label-caps mb-2">Start here</p>
+      <p className="label-caps mb-2">{t("onboarding.title")}</p>
       <p className="text-sm text-text-secondary mb-4">
-        NEXUS is a personal operating system for work. Capture something, put it on the day, then hang it on a project and a goal.
+        {t("onboarding.body")}
       </p>
       <ol className="space-y-2 text-sm text-text-primary mb-4">
-        <Step done={hasTask} label="Create a task" action={() => openComposer()} actionLabel="Capture" />
+        <Step done={hasTask} label={t("onboarding.task")} action={() => openComposer()} actionLabel={t("action.capture")} />
         <Step
           done={hasScheduled}
-          label="Schedule it on Today"
+          label={t("onboarding.schedule")}
           action={() => router.push("/")}
-          actionLabel="Today"
+          actionLabel={t("nav.today")}
         />
         <Step
           done={hasProject}
-          label="Create a project"
+          label={t("onboarding.project")}
           action={() => router.push("/projects")}
-          actionLabel="Projects"
+          actionLabel={t("nav.projects")}
         />
         <Step
           done={hasGoal}
-          label="Create a goal"
+          label={t("onboarding.goal")}
           action={() => router.push("/goals")}
-          actionLabel="Goals"
+          actionLabel={t("nav.goals")}
         />
       </ol>
       <div className="flex gap-2">
@@ -68,7 +70,7 @@ export function Onboarding() {
             void completeOnboarding();
           }}
         >
-          Skip
+          {t("action.skip")}
         </Button>
       </div>
     </section>

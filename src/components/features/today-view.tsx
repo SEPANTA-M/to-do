@@ -24,8 +24,10 @@ import { cn } from "@/lib/utils";
 import { useWorkspaceStore } from "@/state/workspace-store";
 import { resolveTaskContext } from "@/domain/relationships";
 import Link from "next/link";
+import { useT } from "@/i18n/use-t";
 
 export function TodayView() {
+  const t = useT();
   const tasks = useTaskStore((state) => state.tasks);
   const hydrated = useTaskStore((state) => state.hydrated);
   const updateTask = useTaskStore((state) => state.updateTask);
@@ -73,10 +75,10 @@ export function TodayView() {
 
   const greeting = React.useMemo(() => {
     const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  }, []);
+    if (hour < 12) return t("today.morning");
+    if (hour < 18) return t("today.afternoon");
+    return t("today.evening");
+  }, [t]);
 
   const proposeChange = (original: Task, proposed: Task, kind: "move" | "resize") => {
     const conflicts = detectConflicts(proposed, tasks);
@@ -194,7 +196,7 @@ export function TodayView() {
             <div className="flex items-center gap-1">
               <Button size="sm" variant="ghost" onClick={() => openComposer()} className="hidden sm:inline-flex">
                 <Plus className="h-4 w-4" />
-                Capture
+                {t("action.capture")}
               </Button>
               <Button
                 variant="ghost"
@@ -218,7 +220,7 @@ export function TodayView() {
 
             {current && (
               <section>
-                <SectionLabel>Now</SectionLabel>
+                <SectionLabel>{t("today.now")}</SectionLabel>
                 <div className="pl-0">
                   <h2 className="text-2xl font-medium tracking-tight text-text-primary leading-snug">
                     {current.title}
@@ -229,7 +231,7 @@ export function TodayView() {
                         {currentContext.project.name}
                       </Link>
                     ) : (
-                      <span>Unassigned</span>
+                      <span>{t("today.unassigned")}</span>
                     )}
                     {currentContext.goal && (
                       <>
@@ -246,21 +248,21 @@ export function TodayView() {
                   <div className="mt-4 flex flex-wrap gap-2">
                     {current.status !== "in_progress" && current.status !== "completed" && (
                       <Button size="sm" onClick={() => void startTask(current.id)}>
-                        Start
+                        {t("action.start")}
                       </Button>
                     )}
                     {current.status === "in_progress" && (
                       <Button size="sm" variant="secondary" onClick={() => void pauseTask(current.id)}>
-                        Pause
+                        {t("action.pause")}
                       </Button>
                     )}
                     {current.status !== "completed" && (
                       <Button size="sm" variant="ghost" onClick={() => void completeTask(current.id)}>
-                        Complete
+                        {t("action.complete")}
                       </Button>
                     )}
                     <Button size="sm" variant="secondary" asChild>
-                      <Link href={`/focus?task=${current.id}`}>Focus</Link>
+                      <Link href={`/focus?task=${current.id}`}>{t("action.focus")}</Link>
                     </Button>
                   </div>
                 </div>
@@ -269,7 +271,7 @@ export function TodayView() {
 
             {overdue.length > 0 && (
               <section>
-                <SectionLabel>Still open</SectionLabel>
+                <SectionLabel>{t("today.stillOpen")}</SectionLabel>
                 <ul className="space-y-3">
                   {overdue.map((task) => (
                     <li key={task.id} className="flex items-baseline justify-between gap-3">
@@ -286,14 +288,14 @@ export function TodayView() {
                           className="text-xs text-text-tertiary hover:text-text-primary"
                           onClick={() => void completeTask(task.id)}
                         >
-                          Complete
+                          {t("action.complete")}
                         </button>
                         <button
                           type="button"
                           className="text-xs text-text-tertiary hover:text-text-primary"
                           onClick={() => void archiveTask(task.id)}
                         >
-                          Archive
+                          {t("action.archive")}
                         </button>
                       </div>
                     </li>
@@ -304,7 +306,7 @@ export function TodayView() {
 
             <section className="flex flex-col min-h-[32rem]">
               <div className="flex items-center justify-between mb-4 gap-3">
-                <SectionLabel className="mb-0 flex-1">Today&apos;s flow</SectionLabel>
+                <SectionLabel className="mb-0 flex-1">{t("today.flow")}</SectionLabel>
                 <div className="flex items-center gap-1">
                   {([15, 30, 60] as const).map((value) => (
                     <button
@@ -327,11 +329,11 @@ export function TodayView() {
               {dayTasks.length === 0 ? (
                 <div className="flex flex-col flex-1 min-h-[28rem]">
                   <EmptyState
-                    title="Your day is clear."
-                    description="Nothing needs your attention yet."
+                    title={t("empty.day")}
+                    description={t("empty.dayHint")}
                     action={
                       <Button onClick={() => openComposer()} variant="secondary">
-                        Plan something
+                        {t("action.plan")}
                       </Button>
                     }
                   />

@@ -23,13 +23,9 @@ import { HierarchyPicker, type HierarchyValue } from "./hierarchy-picker";
 import { useWorkspaceStore } from "@/state/workspace-store";
 import { useSettingsStore } from "@/state/settings-store";
 import { cn } from "@/lib/utils";
+import { useT } from "@/i18n/use-t";
 
-const PRIORITIES: { id: TaskPriority; label: string }[] = [
-  { id: "low", label: "Low" },
-  { id: "medium", label: "Medium" },
-  { id: "high", label: "High" },
-  { id: "critical", label: "Critical" },
-];
+const PRIORITIES: TaskPriority[] = ["low", "medium", "high", "critical"];
 
 interface TaskComposerProps {
   open: boolean;
@@ -44,6 +40,7 @@ export function TaskComposer({
   onSubmit,
   defaults,
 }: TaskComposerProps) {
+  const t = useT();
   const defaultDuration = useSettingsStore((s) => s.settings.defaultDurationMinutes);
   const goals = useWorkspaceStore((s) => s.goals);
   const milestones = useWorkspaceStore((s) => s.milestones);
@@ -164,13 +161,11 @@ export function TaskComposer({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[520px]">
         <DialogHeader>
-          <p className="label-caps mb-1">New task</p>
+          <p className="label-caps mb-1">{t("action.newTask")}</p>
           <DialogTitle className="text-xl font-medium tracking-tight">
-            {fromTimeline ? "Schedule this" : "What needs to happen?"}
+            {fromTimeline ? t("composer.schedule") : t("composer.heading")}
           </DialogTitle>
-          <DialogDescription>
-            Title is required. Date, time, and project are optional — fill what you know.
-          </DialogDescription>
+          <DialogDescription>{t("composer.hint")}</DialogDescription>
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-5 pt-1">
@@ -181,11 +176,11 @@ export function TaskComposer({
           )}
 
           <section className="space-y-2">
-            <Label htmlFor="task-title">Title</Label>
+            <Label htmlFor="task-title">{t("field.title")}</Label>
             <Input
               id="task-title"
               ref={inputRef}
-              placeholder="e.g. Finish physics homework tomorrow at 7pm for 60 minutes"
+              placeholder={t("composer.placeholder")}
               value={title}
               onChange={(event) => setTitle(event.target.value)}
               autoComplete="off"
@@ -193,7 +188,7 @@ export function TaskComposer({
             />
             {showParseHint && (
               <p className="text-xs text-text-secondary">
-                Reads as{" "}
+                {t("composer.readsAs")}{" "}
                 <span className="text-text-primary">
                   {parsed.title !== title.trim() ? parsed.title : title.trim()}
                 </span>
@@ -206,10 +201,10 @@ export function TaskComposer({
           </section>
 
           <section>
-            <p className="label-caps mb-2">When</p>
+            <p className="label-caps mb-2">{t("field.when")}</p>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
               <div className="space-y-1.5">
-                <Label htmlFor="task-date">Date</Label>
+                <Label htmlFor="task-date">{t("field.date")}</Label>
                 <Input
                   id="task-date"
                   type="date"
@@ -218,7 +213,7 @@ export function TaskComposer({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="task-time">Start time</Label>
+                <Label htmlFor="task-time">{t("field.time")}</Label>
                 <Input
                   id="task-time"
                   type="time"
@@ -227,7 +222,7 @@ export function TaskComposer({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="task-duration">Duration (min)</Label>
+                <Label htmlFor="task-duration">{t("field.duration")}</Label>
                 <Input
                   id="task-duration"
                   type="number"
@@ -241,29 +236,29 @@ export function TaskComposer({
           </section>
 
           <section>
-            <p className="label-caps mb-2">Priority</p>
+            <p className="label-caps mb-2">{t("field.priority")}</p>
             <div className="grid grid-cols-4 gap-1">
               {PRIORITIES.map((item) => (
                 <button
-                  key={item.id}
+                  key={item}
                   type="button"
-                  aria-pressed={priority === item.id}
-                  onClick={() => setPriority(item.id)}
+                  aria-pressed={priority === item}
+                  onClick={() => setPriority(item)}
                   className={cn(
                     "h-11 rounded text-xs font-medium border transition-colors duration-fast",
-                    priority === item.id
+                    priority === item
                       ? "bg-bg-tertiary text-text-primary border-border-secondary"
-                      : "bg-bg-primary text-text-secondary border-border-primary hover:text-text-primary"
+                      : "bg-bg-field text-text-secondary border-border-secondary hover:text-text-primary"
                   )}
                 >
-                  {item.label}
+                  {t(`priority.${item}`)}
                 </button>
               ))}
             </div>
           </section>
 
           <section>
-            <p className="label-caps mb-2">Belongs to</p>
+            <p className="label-caps mb-2">{t("field.belongs")}</p>
             <HierarchyPicker
               goals={goals}
               milestones={milestones}
@@ -279,12 +274,12 @@ export function TaskComposer({
               onClick={() => setShowMore(true)}
               className="text-xs text-text-tertiary hover:text-text-primary min-h-9"
             >
-              More — description, tags, reminder
+              {t("composer.more")}
             </button>
           ) : (
             <section className="space-y-3 border-t border-border-primary pt-4">
               <div className="space-y-1.5">
-                <Label htmlFor="task-description">Description</Label>
+                <Label htmlFor="task-description">{t("field.description")}</Label>
                 <Textarea
                   id="task-description"
                   placeholder="Context, links, notes"
@@ -294,7 +289,7 @@ export function TaskComposer({
                 />
               </div>
               <div className="space-y-1.5">
-                <Label htmlFor="task-tags">Tags</Label>
+                <Label htmlFor="task-tags">{t("field.tags")}</Label>
                 <Input
                   id="task-tags"
                   placeholder="focus, deep-work"
@@ -309,7 +304,7 @@ export function TaskComposer({
                   onChange={(event) => setReminderEnabled(event.target.checked)}
                   className="h-4 w-4 rounded border-border-primary"
                 />
-                Remind me 10 minutes before
+                {t("composer.reminder")}
               </label>
               <label className="flex items-center gap-2 text-sm text-text-secondary min-h-11">
                 <input
@@ -327,10 +322,10 @@ export function TaskComposer({
 
           <DialogFooter className="gap-2">
             <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
-              Cancel
+              {t("action.cancel")}
             </Button>
             <Button type="submit" disabled={!title.trim() || submitting}>
-              {submitting ? "Saving…" : "Create task"}
+              {submitting ? t("action.saving") : t("action.createTask")}
             </Button>
           </DialogFooter>
         </form>

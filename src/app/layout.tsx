@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
+import { LocaleProvider } from "@/components/providers/locale-provider";
 import { AppShell } from "@/components/layout/app-shell";
 
 export const metadata: Metadata = {
@@ -31,8 +32,8 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f4f1ec" },
-    { media: "(prefers-color-scheme: dark)", color: "#0e1214" },
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#000000" },
   ],
 };
 
@@ -42,11 +43,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
       <body>
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var raw=localStorage.getItem("nexus-theme");var theme=raw?JSON.parse(raw).state.theme:"system";var dark=theme==="dark"||(theme!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);var root=document.documentElement;root.classList.remove("light","dark");root.classList.add(dark?"dark":"light");}catch(e){}})();`,
+            __html: `(function(){try{var root=document.documentElement;var raw=localStorage.getItem("nexus-theme");var theme=raw?JSON.parse(raw).state.theme:"system";var dark=theme==="dark"||(theme!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);root.classList.remove("light","dark");root.classList.add(dark?"dark":"light");var loc="en";var locRaw=localStorage.getItem("nexus-locale");if(locRaw){loc=JSON.parse(locRaw).state.locale||loc;}else if((navigator.language||"").toLowerCase().indexOf("fa")===0){loc="fa";}root.setAttribute("lang",loc);root.setAttribute("dir",loc==="fa"?"rtl":"ltr");}catch(e){}})();`,
           }}
         />
         <ThemeProvider>
-          <AppShell>{children}</AppShell>
+          <LocaleProvider>
+            <AppShell>{children}</AppShell>
+          </LocaleProvider>
         </ThemeProvider>
       </body>
     </html>

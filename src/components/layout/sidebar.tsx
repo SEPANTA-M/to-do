@@ -21,37 +21,33 @@ import {
 import { Button } from "@/components/primitives/button";
 import { cn } from "@/lib/utils";
 import { useUiStore } from "@/state/ui-store";
-
-interface NavItem {
-  title: string;
-  href: string;
-  icon: React.ReactNode;
-}
-
-const primaryNav: NavItem[] = [
-  { title: "Today", href: "/", icon: <Inbox className="h-4 w-4" /> },
-  { title: "Tasks", href: "/tasks", icon: <ListTodo className="h-4 w-4" /> },
-  { title: "Projects", href: "/projects", icon: <FolderKanban className="h-4 w-4" /> },
-  { title: "Focus", href: "/focus", icon: <Zap className="h-4 w-4" /> },
-  { title: "Insights", href: "/insights", icon: <BarChart3 className="h-4 w-4" /> },
-];
-
-const secondaryNav: NavItem[] = [
-  { title: "Goals", href: "/goals", icon: <Target className="h-4 w-4" /> },
-  { title: "Calendar", href: "/calendar", icon: <Calendar className="h-4 w-4" /> },
-  { title: "Life map", href: "/life-map", icon: <Map className="h-4 w-4" /> },
-  { title: "Notes", href: "/notes", icon: <StickyNote className="h-4 w-4" /> },
-];
+import { useT } from "@/i18n/use-t";
 
 export function Sidebar({ onNewTask }: { onNewTask?: () => void }) {
   const pathname = usePathname();
   const collapsed = useUiStore((s) => s.sidebarCollapsed);
   const toggle = useUiStore((s) => s.toggleSidebarCollapsed);
+  const t = useT();
+
+  const primaryNav = [
+    { title: t("nav.today"), href: "/", icon: <Inbox className="h-4 w-4" /> },
+    { title: t("nav.tasks"), href: "/tasks", icon: <ListTodo className="h-4 w-4" /> },
+    { title: t("nav.projects"), href: "/projects", icon: <FolderKanban className="h-4 w-4" /> },
+    { title: t("nav.focus"), href: "/focus", icon: <Zap className="h-4 w-4" /> },
+    { title: t("nav.insights"), href: "/insights", icon: <BarChart3 className="h-4 w-4" /> },
+  ];
+
+  const secondaryNav = [
+    { title: t("nav.goals"), href: "/goals", icon: <Target className="h-4 w-4" /> },
+    { title: t("nav.calendar"), href: "/calendar", icon: <Calendar className="h-4 w-4" /> },
+    { title: t("nav.lifeMap"), href: "/life-map", icon: <Map className="h-4 w-4" /> },
+    { title: t("nav.notes"), href: "/notes", icon: <StickyNote className="h-4 w-4" /> },
+  ];
 
   return (
     <aside
       className={cn(
-        "hidden lg:flex lg:flex-col h-screen sticky top-0 border-r border-border-primary bg-bg-secondary transition-[width] duration-base",
+        "hidden lg:flex lg:flex-col h-screen sticky top-0 border-e border-border-primary bg-bg-secondary transition-[width] duration-base",
         collapsed ? "w-14" : "w-[13.75rem]"
       )}
     >
@@ -65,7 +61,7 @@ export function Sidebar({ onNewTask }: { onNewTask?: () => void }) {
           variant="ghost"
           size="icon"
           onClick={onNewTask}
-          aria-label="Create task"
+          aria-label={t("action.newTask")}
           className="h-8 w-8"
         >
           <Plus className="h-4 w-4" />
@@ -89,7 +85,7 @@ export function Sidebar({ onNewTask }: { onNewTask?: () => void }) {
         </div>
 
         <div className="space-y-0.5">
-          {!collapsed && <div className="px-2 pb-1 label-caps">More</div>}
+          {!collapsed && <div className="px-2 pb-1 label-caps">{t("nav.more")}</div>}
           {secondaryNav.map((item) => (
             <NavLink
               key={item.href}
@@ -106,9 +102,9 @@ export function Sidebar({ onNewTask }: { onNewTask?: () => void }) {
       </nav>
 
       <div className="p-2 border-t border-border-primary space-y-0.5">
-        <NavLink href="/settings" isActive={pathname === "/settings"} collapsed={collapsed} title="Settings">
+        <NavLink href="/settings" isActive={pathname === "/settings"} collapsed={collapsed} title={t("nav.settings")}>
           <Settings className="h-4 w-4" />
-          {!collapsed && <span>Settings</span>}
+          {!collapsed && <span>{t("nav.settings")}</span>}
         </NavLink>
         <button
           type="button"
@@ -117,10 +113,10 @@ export function Sidebar({ onNewTask }: { onNewTask?: () => void }) {
             "flex w-full items-center gap-2.5 px-2 py-2 rounded text-[13px] text-text-tertiary hover:text-text-primary hover:bg-bg-tertiary transition-colors duration-fast",
             collapsed && "justify-center"
           )}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
+          aria-label={collapsed ? t("nav.expand") : t("nav.collapse")}
         >
           {collapsed ? <PanelLeftOpen className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          {!collapsed && <span>Collapse</span>}
+          {!collapsed && <span>{t("nav.collapse")}</span>}
         </button>
       </div>
     </aside>
@@ -149,7 +145,7 @@ function NavLink({
         collapsed && "justify-center",
         isActive
           ? "bg-bg-tertiary text-text-primary"
-          : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary/60"
+          : "text-text-secondary hover:text-text-primary hover:bg-bg-tertiary"
       )}
     >
       {children}

@@ -4,17 +4,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Inbox, ListTodo, FolderKanban, Target, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-const mobileNav = [
-  { title: "Today", href: "/", icon: Inbox },
-  { title: "Tasks", href: "/tasks", icon: ListTodo },
-  { title: "Projects", href: "/projects", icon: FolderKanban },
-  { title: "Goals", href: "/goals", icon: Target },
-  { title: "More", href: "/menu", icon: Menu },
-];
+import { useT } from "@/i18n/use-t";
 
 export function MobileNav() {
   const pathname = usePathname();
+  const t = useT();
+  const mobileNav = [
+    { title: t("nav.today"), href: "/", icon: Inbox },
+    { title: t("nav.tasks"), href: "/tasks", icon: ListTodo },
+    { title: t("nav.projects"), href: "/projects", icon: FolderKanban },
+    { title: t("nav.goals"), href: "/goals", icon: Target },
+    { title: t("nav.menu"), href: "/menu", icon: Menu },
+  ];
 
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border-primary bg-bg-elevated">
@@ -27,7 +28,7 @@ export function MobileNav() {
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-0.5 text-[10px] tracking-wide font-medium transition-colors duration-fast",
+                "flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors duration-fast",
                 isActive ? "text-interactive-primary" : "text-text-tertiary"
               )}
             >
