@@ -16,7 +16,7 @@ export function Header({ onCommandOpen }: HeaderProps) {
   };
 
   return (
-    <header className="lg:hidden sticky top-0 z-40 h-12 border-b border-border-primary bg-bg-primary/90 backdrop-blur">
+    <header className="lg:hidden sticky top-0 z-40 h-12 border-b border-border-primary bg-bg-primary">
       <div className="flex items-center justify-between h-full px-4">
         <span className="text-[12px] font-medium tracking-[0.22em] text-text-primary">
           NEXUS

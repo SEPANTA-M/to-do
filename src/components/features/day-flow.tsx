@@ -370,7 +370,7 @@ export function DayFlow({
                     "absolute left-3 right-1 z-20 px-2.5 py-1.5",
                     "select-none cursor-grab active:cursor-grabbing",
                     "transition-[opacity,background-color] duration-fast",
-                    "bg-bg-elevated/80 border-l-2",
+                    "bg-bg-elevated border border-border-primary border-l-2",
                     task.schedulingBehavior === "fixed"
                       ? "border-l-text-primary"
                       : "border-dashed border-l-interactive-primary/60",

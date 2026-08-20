@@ -117,7 +117,7 @@ export function GoalDetail({ goalId }: { goalId: string }) {
             onChange={(event) =>
               void updateGoal(goal.id, { status: event.target.value as typeof goal.status })
             }
-            className="h-9 rounded-md border border-border-primary bg-bg-primary px-2 text-sm"
+            className="h-11 rounded border border-border-secondary bg-bg-field px-2 text-sm text-text-primary"
           >
             {GOAL_STATUSES.map((status) => (
               <option key={status} value={status} disabled={!canTransitionGoal(goal.status, status)}>

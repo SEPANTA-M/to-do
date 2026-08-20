@@ -11,8 +11,10 @@
     --bg-primary: 40 14% 96.5%;
     --bg-secondary: 40 12% 94.5%;
     --bg-tertiary: 40 10% 91.5%;
-    --bg-elevated: 40 20% 99%;
+    --bg-elevated: 40 18% 98%;
+    --bg-field: 40 16% 91%;
     --bg-overlay: 210 20% 8%;
+    color-scheme: light;
 
     /* Text */
     --text-primary: 210 16% 12%;
@@ -72,8 +74,10 @@
     --bg-primary: 210 16% 6.5%;
     --bg-secondary: 210 14% 8.5%;
     --bg-tertiary: 210 12% 11%;
-    --bg-elevated: 210 12% 12.5%;
+    --bg-elevated: 210 14% 10%;
+    --bg-field: 210 16% 5%;
     --bg-overlay: 210 20% 2%;
+    color-scheme: dark;
 
     --text-primary: 40 12% 94%;
     --text-secondary: 210 8% 68%;
@@ -130,6 +134,20 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.011em;
+  }
+
+  input,
+  textarea,
+  select {
+    color: hsl(var(--text-primary));
+    background-color: hsl(var(--bg-field));
+    border-color: hsl(var(--border-secondary));
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: hsl(var(--text-tertiary));
+    opacity: 1;
   }
 
   ::selection {

@@ -156,7 +156,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
                       status: event.target.value as typeof project.status,
                     })
                   }
-                  className="h-8 rounded-md border border-border-primary bg-bg-primary px-2 text-xs"
+                  className="h-11 rounded border border-border-secondary bg-bg-field px-2 text-sm text-text-primary"
                 >
                   {PROJECT_STATUSES.map((status) => (
                     <option
@@ -224,7 +224,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
               <select
                 value={sort}
                 onChange={(event) => setSort(event.target.value as TaskSort)}
-                className="h-8 rounded-md border border-border-primary bg-bg-primary px-2 text-xs"
+                className="h-11 rounded border border-border-secondary bg-bg-field px-2 text-sm text-text-primary"
               >
                 <option value="priority">Priority</option>
                 <option value="time">Deadline</option>

@@ -196,7 +196,7 @@ export function SettingsView() {
           </Field>
           <Field label="Week starts">
             <select
-              className="h-9 w-full rounded border border-border-primary bg-bg-elevated px-2 text-sm"
+              className="h-11 w-full rounded border border-border-secondary bg-bg-field px-2 text-sm text-text-primary"
               value={settings.startOfWeek}
               onChange={(event) => patch({ startOfWeek: Number(event.target.value) as 0 | 1 | 6 })}
             >
@@ -207,7 +207,7 @@ export function SettingsView() {
           </Field>
           <Field label="Time format">
             <select
-              className="h-9 w-full rounded border border-border-primary bg-bg-elevated px-2 text-sm"
+              className="h-11 w-full rounded border border-border-secondary bg-bg-field px-2 text-sm text-text-primary"
               value={settings.timeFormat}
               onChange={(event) => patch({ timeFormat: event.target.value as "12h" | "24h" })}
             >

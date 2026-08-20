@@ -16,7 +16,8 @@ const config: Config = {
           secondary: "hsl(var(--bg-secondary))",
           tertiary: "hsl(var(--bg-tertiary))",
           elevated: "hsl(var(--bg-elevated))",
-          overlay: "hsl(var(--bg-overlay) / 0.4)",
+          field: "hsl(var(--bg-field))",
+          overlay: "hsl(var(--bg-overlay) / 0.72)",
         },
         
         // Text

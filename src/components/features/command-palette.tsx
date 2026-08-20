@@ -85,7 +85,7 @@ export function CommandPalette({ open, onOpenChange, onNewTask }: CommandPalette
     <>
       {open && (
         <div
-          className="fixed inset-0 z-[1200] bg-bg-overlay/70"
+          className="fixed inset-0 z-[1200] bg-bg-overlay"
           onClick={() => handleOpenChange(false)}
         />
       )}

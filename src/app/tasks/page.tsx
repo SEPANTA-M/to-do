@@ -70,7 +70,7 @@ export default function TasksPage() {
           <select
             value={sort}
             onChange={(event) => setSort(event.target.value as TaskSort)}
-            className="h-10 rounded-md border border-border-primary bg-bg-primary px-3 text-sm"
+            className="h-11 rounded border border-border-secondary bg-bg-field px-3 text-sm text-text-primary"
           >
             <option value="manual">Manual</option>
             <option value="priority">Priority</option>
@@ -81,7 +81,7 @@ export default function TasksPage() {
           <select
             value={statusFilter}
             onChange={(event) => setStatusFilter(event.target.value as TaskStatus | "all")}
-            className="h-10 rounded-md border border-border-primary bg-bg-primary px-3 text-sm"
+            className="h-11 rounded border border-border-secondary bg-bg-field px-3 text-sm text-text-primary"
           >
             <option value="all">All statuses</option>
             {Object.entries(STATUS_LABELS).map(([value, label]) => (

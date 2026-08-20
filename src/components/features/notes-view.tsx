@@ -138,7 +138,7 @@ function NoteEditor({
       />
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <select
-          className="h-9 rounded border border-border-primary bg-bg-elevated px-2 text-sm"
+          className="h-11 rounded border border-border-secondary bg-bg-field px-2 text-sm text-text-primary"
           value={selected.taskId ?? ""}
           onChange={(event) => void updateNote(selected.id, { taskId: event.target.value || null })}
         >
@@ -153,7 +153,7 @@ function NoteEditor({
             ))}
         </select>
         <select
-          className="h-9 rounded border border-border-primary bg-bg-elevated px-2 text-sm"
+          className="h-11 rounded border border-border-secondary bg-bg-field px-2 text-sm text-text-primary"
           value={selected.projectId ?? ""}
           onChange={(event) =>
             void updateNote(selected.id, { projectId: event.target.value || null })
@@ -169,7 +169,7 @@ function NoteEditor({
             ))}
         </select>
         <select
-          className="h-9 rounded border border-border-primary bg-bg-elevated px-2 text-sm"
+          className="h-11 rounded border border-border-secondary bg-bg-field px-2 text-sm text-text-primary"
           value={selected.goalId ?? ""}
           onChange={(event) => void updateNote(selected.id, { goalId: event.target.value || null })}
         >
