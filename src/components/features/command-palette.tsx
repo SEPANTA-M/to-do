@@ -87,7 +87,8 @@ export function CommandPalette({ open, onOpenChange, onNewTask }: CommandPalette
     <>
       {open && (
         <div
-          className="fixed inset-0 z-[1200] scrim-solid"
+          data-nexus-scrim=""
+          className="fixed inset-0"
           onClick={() => handleOpenChange(false)}
         />
       )}
@@ -96,9 +97,8 @@ export function CommandPalette({ open, onOpenChange, onNewTask }: CommandPalette
         open={open}
         onOpenChange={onOpenChange}
         className={cn(
-          "fixed left-[50%] top-[18%] z-[1300] w-full max-w-xl translate-x-[-50%]",
-          "overflow-hidden rounded-md border border-border-primary panel-solid shadow-lg",
-          "animate-slide-in-from-top"
+          "fixed left-[50%] top-[18%] w-full max-w-xl translate-x-[-50%]",
+          "overflow-hidden rounded-md border border-border-primary"
         )}
         label="Command Menu"
       >

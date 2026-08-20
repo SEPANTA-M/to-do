@@ -16,10 +16,8 @@ const DialogOverlay = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <DialogPrimitive.Overlay
     ref={ref}
-    className={cn(
-      "fixed inset-0 z-[1200] scrim-solid data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out",
-      className
-    )}
+    data-nexus-scrim=""
+    className={cn("fixed inset-0", className)}
     {...props}
   />
 ));
@@ -33,20 +31,20 @@ const DialogContent = React.forwardRef<
     <DialogOverlay />
     <DialogPrimitive.Content
       ref={ref}
+      data-nexus-panel=""
       className={cn(
-        "fixed z-[1300] w-full max-w-lg",
+        "fixed w-full max-w-lg",
         "left-[50%] top-[50%] translate-x-[-50%] translate-y-[-50%]",
         "max-md:left-0 max-md:right-0 max-md:top-auto max-md:bottom-0 max-md:translate-x-0 max-md:translate-y-0 max-md:max-w-none max-md:rounded-b-none",
         "max-h-[90dvh] overflow-y-auto",
-        "rounded-md border border-border-secondary panel-solid p-5 shadow-lg",
-        "data-[state=open]:animate-slide-in-from-bottom data-[state=closed]:animate-fade-out",
+        "rounded-md border border-border-secondary p-5",
         "focus:outline-none",
         className
       )}
       {...props}
     >
       {children}
-      <DialogPrimitive.Close className="absolute end-4 top-4 rounded-sm text-text-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-border-focus focus:ring-offset-2 disabled:pointer-events-none">
+      <DialogPrimitive.Close className="absolute end-4 top-4 rounded-sm text-text-secondary hover:text-text-primary focus:outline-none focus:ring-2 focus:ring-border-focus">
         <X className="h-4 w-4" />
         <span className="sr-only">Close</span>
       </DialogPrimitive.Close>
@@ -61,7 +59,7 @@ const DialogHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      "flex flex-col space-y-1.5 text-center sm:text-left",
+      "flex flex-col space-y-1.5 text-center sm:text-start",
       className
     )}
     {...props}

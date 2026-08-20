@@ -243,20 +243,6 @@
     opacity: 0.7;
   }
 
-  [role="dialog"],
-  [data-radix-dialog-content],
-  [cmdk-dialog],
-  [data-radix-select-content],
-  [data-radix-dropdown-menu-content] {
-    background-color: var(--panel) !important;
-    color: hsl(var(--text-primary));
-  }
-
-  [data-radix-dialog-overlay] {
-    background-color: var(--scrim) !important;
-    opacity: 0.7;
-  }
-
   .task-complete {
     animation: task-complete var(--motion-base) var(--ease-spatial);
   }
@@ -287,4 +273,54 @@
       animation: none;
     }
   }
+}
+
+/* Popovers — always opaque. Outside layers so nothing can wash them out. */
+[data-nexus-scrim] {
+  z-index: 9990 !important;
+  background: rgb(0, 0, 0) !important;
+  opacity: 0.55 !important;
+  backdrop-filter: none !important;
+}
+html.dark [data-nexus-scrim] {
+  opacity: 0.72 !important;
+}
+
+[data-nexus-panel],
+[data-radix-dialog-content],
+[cmdk-dialog] {
+  z-index: 10000 !important;
+  background: #ffffff !important;
+  color: #111111 !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.dark [data-nexus-panel],
+html.dark [data-radix-dialog-content],
+html.dark [cmdk-dialog] {
+  background: #111111 !important;
+  color: #f5f5f5 !important;
+}
+
+[data-nexus-panel] input,
+[data-nexus-panel] textarea,
+[data-nexus-panel] select,
+[data-radix-dialog-content] input,
+[data-radix-dialog-content] textarea,
+[data-radix-dialog-content] select {
+  background: #f0f0f0 !important;
+  color: #111111 !important;
+  opacity: 1 !important;
+}
+
+html.dark [data-nexus-panel] input,
+html.dark [data-nexus-panel] textarea,
+html.dark [data-nexus-panel] select,
+html.dark [data-radix-dialog-content] input,
+html.dark [data-radix-dialog-content] textarea,
+html.dark [data-radix-dialog-content] select {
+  background: #000000 !important;
+  color: #f5f5f5 !important;
 }

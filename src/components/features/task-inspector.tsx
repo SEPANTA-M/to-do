@@ -111,8 +111,9 @@ export function TaskInspector({
 
   return (
     <div
+      data-nexus-panel=""
       className={cn(
-        "flex flex-col panel-solid",
+        "flex flex-col",
         variant === "panel" && "h-full border-l border-border-primary",
         variant === "sheet" &&
           "fixed inset-x-0 bottom-0 z-[1300] max-h-[88vh] rounded-t-xl border-t border-border-primary shadow-xl",
