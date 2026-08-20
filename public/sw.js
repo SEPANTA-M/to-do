@@ -1,4 +1,4 @@
-const VERSION = "nexus-shell-v1";
+const VERSION = "nexus-shell-v3";
 const OFFLINE = "/offline";
 
 self.addEventListener("install", (event) => {

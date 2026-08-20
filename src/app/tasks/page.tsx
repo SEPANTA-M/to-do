@@ -157,7 +157,9 @@ export default function TasksPage() {
           <div className="lg:hidden">
             <button
               type="button"
-              className="fixed inset-0 z-[1200] bg-bg-overlay"
+              data-nexus-scrim=""
+              className="fixed inset-0 z-[1200] bg-black/55"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.55)", opacity: 1 }}
               aria-label="Close inspector"
               onClick={closeInspector}
             />

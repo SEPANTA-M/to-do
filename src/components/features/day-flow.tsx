@@ -439,8 +439,9 @@ export function DayFlow({
 
       {menu && (
         <div
-          className="fixed z-[1400] min-w-[160px] rounded-md border border-border-secondary bg-bg-elevated py-1 shadow-lg"
-          style={{ left: menu.x, top: menu.y }}
+          data-nexus-panel=""
+          className="fixed z-[1400] min-w-[160px] rounded-md border border-neutral-300 dark:border-neutral-700 bg-white text-neutral-950 dark:bg-neutral-950 dark:text-neutral-50 py-1 shadow-lg"
+          style={{ left: menu.x, top: menu.y, backgroundColor: "var(--panel)", color: "var(--ink)", opacity: 1 }}
           onClick={(event) => event.stopPropagation()}
         >
           <MenuButton

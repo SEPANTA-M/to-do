@@ -280,7 +280,7 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
             </div>
           </div>
 
-          <aside className="border-t lg:border-t-0 lg:border-l border-border-primary px-4 py-5 lg:px-4 space-y-6 bg-bg-secondary/50">
+          <aside className="border-t lg:border-t-0 lg:border-l border-border-primary px-4 py-5 lg:px-4 space-y-6 bg-neutral-50 dark:bg-neutral-950">
             <section>
               <h2 className="text-xs font-semibold uppercase tracking-wide text-text-tertiary mb-2">
                 Details
@@ -384,7 +384,9 @@ export function ProjectDetail({ projectId }: { projectId: string }) {
           <div className="xl:hidden">
             <button
               type="button"
-              className="fixed inset-0 z-[1200] bg-bg-overlay"
+              data-nexus-scrim=""
+              className="fixed inset-0 z-[1200] bg-black/55"
+              style={{ backgroundColor: "rgba(0, 0, 0, 0.55)", opacity: 1 }}
               aria-label="Close inspector"
               onClick={closeInspector}
             />

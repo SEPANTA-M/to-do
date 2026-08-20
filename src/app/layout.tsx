@@ -4,6 +4,7 @@ import "./globals.css";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { LocaleProvider } from "@/components/providers/locale-provider";
 import { AppShell } from "@/components/layout/app-shell";
+import { CRITICAL_POPUP_CSS } from "@/lib/surfaces";
 
 export const metadata: Metadata = {
   title: "NEXUS — Spatial Productivity",
@@ -41,6 +42,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
+        <style dangerouslySetInnerHTML={{ __html: CRITICAL_POPUP_CSS }} />
         <script
           dangerouslySetInnerHTML={{
             __html: `(function(){try{var root=document.documentElement;var raw=localStorage.getItem("nexus-theme");var theme=raw?JSON.parse(raw).state.theme:"system";var dark=theme==="dark"||(theme!=="light"&&window.matchMedia("(prefers-color-scheme: dark)").matches);root.classList.remove("light","dark");root.classList.add(dark?"dark":"light");var loc="en";var locRaw=localStorage.getItem("nexus-locale");if(locRaw){loc=JSON.parse(locRaw).state.locale||loc;}else if((navigator.language||"").toLowerCase().indexOf("fa")===0){loc="fa";}root.setAttribute("lang",loc);root.setAttribute("dir",loc==="fa"?"rtl":"ltr");}catch(e){}})();`,

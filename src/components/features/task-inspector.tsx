@@ -19,6 +19,7 @@ import { STATUS_LABELS } from "@/domain/task/constants";
 import { canTransition } from "@/domain/task/status";
 import { TASK_STATUSES } from "@/domain/types";
 import { cn } from "@/lib/utils";
+import { PANEL_CLASS, PANEL_STYLE } from "@/lib/surfaces";
 import type { UpdateTaskInput } from "@/domain/task/service";
 import { atTimeOnDate } from "@/domain/task/time";
 import { HierarchyPicker } from "./hierarchy-picker";
@@ -114,11 +115,13 @@ export function TaskInspector({
       data-nexus-panel=""
       className={cn(
         "flex flex-col",
-        variant === "panel" && "h-full border-l border-border-primary",
+        PANEL_CLASS,
+        variant === "panel" && "h-full border-l border-neutral-200 dark:border-neutral-800",
         variant === "sheet" &&
-          "fixed inset-x-0 bottom-0 z-[1300] max-h-[88vh] rounded-t-xl border-t border-border-primary shadow-xl",
+          "fixed inset-x-0 bottom-0 z-[1300] max-h-[88vh] rounded-t-xl border-t border-neutral-300 dark:border-neutral-700 shadow-xl",
         className
       )}
+      style={PANEL_STYLE}
     >
       {variant === "sheet" && (
         <div className="flex justify-center pt-2">

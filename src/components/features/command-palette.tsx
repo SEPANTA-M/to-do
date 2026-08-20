@@ -22,6 +22,7 @@ import {
   ClipboardCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { PANEL_CLASS } from "@/lib/surfaces";
 import { useThemeStore } from "@/state/theme-store";
 import { useWorkspaceStore } from "@/state/workspace-store";
 import { useTaskStore } from "@/state/task-store";
@@ -84,31 +85,25 @@ export function CommandPalette({ open, onOpenChange, onNewTask }: CommandPalette
   );
 
   return (
-    <>
-      {open && (
-        <div
-          data-nexus-scrim=""
-          className="fixed inset-0"
-          onClick={() => handleOpenChange(false)}
-        />
+    <CommandPrimitive.Dialog
+      open={open}
+      onOpenChange={onOpenChange}
+      overlayClassName="fixed inset-0 z-[9990] bg-black/55"
+      contentClassName={cn(
+        "fixed left-[50%] top-[18%] z-[10000] w-full max-w-xl translate-x-[-50%]",
+        "overflow-hidden rounded-md border border-neutral-300 dark:border-neutral-700",
+        PANEL_CLASS
       )}
-
-      <CommandPrimitive.Dialog
-        open={open}
-        onOpenChange={onOpenChange}
-        className={cn(
-          "fixed left-[50%] top-[18%] w-full max-w-xl translate-x-[-50%]",
-          "overflow-hidden rounded-md border border-border-primary"
-        )}
-        label="Command Menu"
-      >
-        <div className="flex items-center border-b border-border-primary px-4">
-          <Search className="mr-2 h-4 w-4 shrink-0 text-text-tertiary" />
+      className={PANEL_CLASS}
+      label="Command Menu"
+    >
+        <div className="flex items-center border-b border-neutral-200 dark:border-neutral-800 px-4">
+          <Search className="mr-2 h-4 w-4 shrink-0 text-neutral-500" />
           <CommandPrimitive.Input
             value={search}
             onValueChange={setSearch}
             placeholder={t("command.search")}
-            className="flex h-11 w-full bg-transparent text-sm outline-none placeholder:text-text-tertiary"
+            className="flex h-11 w-full bg-transparent text-sm text-neutral-950 dark:text-neutral-50 outline-none placeholder:text-neutral-500"
           />
         </div>
 
@@ -282,8 +277,7 @@ export function CommandPalette({ open, onOpenChange, onNewTask }: CommandPalette
             </CommandItem>
           </CommandPrimitive.Group>
         </CommandPrimitive.List>
-      </CommandPrimitive.Dialog>
-    </>
+    </CommandPrimitive.Dialog>
   );
 }
 
