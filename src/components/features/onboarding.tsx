@@ -19,17 +19,18 @@ export function Onboarding() {
   const router = useRouter();
   const [dismissed, setDismissed] = React.useState(false);
 
-  if (!hydrated || settings.onboardingCompleted || dismissed) return null;
-
   const hasTask = tasks.length > 0;
   const hasScheduled = tasks.some((task) => Boolean(task.startTime));
   const hasProject = projects.length > 0;
   const hasGoal = goals.length > 0;
+  const finished = hasTask && hasScheduled && hasProject && hasGoal;
 
-  if (hasTask && hasScheduled && hasProject && hasGoal) {
+  React.useEffect(() => {
+    if (!hydrated || settings.onboardingCompleted || dismissed || !finished) return;
     void completeOnboarding();
-    return null;
-  }
+  }, [hydrated, settings.onboardingCompleted, dismissed, finished, completeOnboarding]);
+
+  if (!hydrated || settings.onboardingCompleted || dismissed || finished) return null;
 
   return (
     <section className="mx-5 mt-4 lg:mx-10 max-w-3xl border border-border-primary rounded-md px-4 py-4 bg-bg-elevated">

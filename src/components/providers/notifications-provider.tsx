@@ -15,15 +15,10 @@ export function NotificationsProvider({ children }: { children: React.ReactNode 
 
   useEffect(() => {
     if (!hydrated || !settingsHydrated) return;
-    if (!settings.notifications.enabled && !settings.notifications.taskReminders && !settings.notifications.deadlines) {
-      return;
-    }
+    if (!settings.notifications.enabled) return;
 
     const tick = () => {
-      const due = dueReminders(new Date(), tasks, {
-        ...settings,
-        notifications: { ...settings.notifications, enabled: true },
-      });
+      const due = dueReminders(new Date(), tasks, settings);
       for (const item of due) {
         void markReminder(item.key);
         void addNotification(item.notification);

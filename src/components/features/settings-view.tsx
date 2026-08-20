@@ -26,6 +26,7 @@ export function SettingsView() {
 
   const tasks = useTaskStore((s) => s.tasks);
   const history = useTaskStore((s) => s.history);
+  const pendingMutations = useTaskStore((s) => s.mutations);
   const replaceTasks = useTaskStore((s) => s.replaceAll);
   const goals = useWorkspaceStore((s) => s.goals);
   const milestones = useWorkspaceStore((s) => s.milestones);
@@ -327,7 +328,7 @@ export function SettingsView() {
           Cloud sync is not configured. A mutation ledger is recorded locally for a future worker. Pending local changes are never discarded.
         </p>
         <p className="mt-2 font-mono text-xs text-text-tertiary">
-          {useTaskStore.getState().mutations.filter((m) => m.status === "pending").length} pending mutations
+          {pendingMutations.filter((m) => m.status === "pending").length} pending mutations
         </p>
       </section>
     </div>

@@ -142,6 +142,8 @@ export function TaskComposer({
 
       onOpenChange(false);
     } catch {
+      /* keep the dialog open with a usable button */
+    } finally {
       setSubmitting(false);
     }
   };
