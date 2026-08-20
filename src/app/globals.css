@@ -1,5 +1,37 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-bg-primary: hsl(var(--bg-primary));
+  --color-bg-secondary: hsl(var(--bg-secondary));
+  --color-bg-tertiary: hsl(var(--bg-tertiary));
+  --color-bg-elevated: hsl(var(--bg-elevated));
+  --color-bg-field: hsl(var(--bg-field));
+  --color-bg-overlay: #000000;
+  --color-text-primary: hsl(var(--text-primary));
+  --color-text-secondary: hsl(var(--text-secondary));
+  --color-text-tertiary: hsl(var(--text-tertiary));
+  --color-text-disabled: hsl(var(--text-disabled));
+  --color-text-inverse: hsl(var(--text-inverse));
+  --color-border-primary: hsl(var(--border-primary));
+  --color-border-secondary: hsl(var(--border-secondary));
+  --color-border-focus: hsl(var(--border-focus));
+  --color-border-hover: hsl(var(--border-hover));
+  --color-interactive-primary: hsl(var(--interactive-primary));
+  --color-interactive-primary-hover: hsl(var(--interactive-primary-hover));
+  --color-interactive-primary-active: hsl(var(--interactive-primary-active));
+  --color-interactive-secondary: hsl(var(--interactive-secondary));
+  --color-interactive-secondary-hover: hsl(var(--interactive-secondary-hover));
+  --color-interactive-secondary-active: hsl(var(--interactive-secondary-active));
+  --color-status-success: hsl(var(--status-success));
+  --color-status-success-subtle: hsl(var(--status-success-subtle));
+  --color-status-warning: hsl(var(--status-warning));
+  --color-status-warning-subtle: hsl(var(--status-warning-subtle));
+  --color-status-error: hsl(var(--status-error));
+  --color-status-error-subtle: hsl(var(--status-error-subtle));
+  --color-status-info: hsl(var(--status-info));
+  --color-status-info-subtle: hsl(var(--status-info-subtle));
+}
+
 /**
  * NEXUS — opaque light/dark. No glass.
  */
@@ -12,6 +44,8 @@
     --bg-elevated: 0 0% 100%;
     --bg-field: 0 0% 94%;
     --bg-overlay: 0 0% 0%;
+    --panel: #ffffff;
+    --scrim: #000000;
     color-scheme: light;
 
     --text-primary: 0 0% 8%;
@@ -70,6 +104,8 @@
     --bg-elevated: 0 0% 8%;
     --bg-field: 0 0% 4%;
     --bg-overlay: 0 0% 0%;
+    --panel: #111111;
+    --scrim: #000000;
     color-scheme: dark;
 
     --text-primary: 0 0% 96%;
@@ -195,6 +231,30 @@
   .field-well {
     background: hsl(var(--bg-field));
     color: hsl(var(--text-primary));
+  }
+
+  .panel-solid {
+    background-color: var(--panel) !important;
+    color: hsl(var(--text-primary));
+  }
+
+  .scrim-solid {
+    background-color: var(--scrim) !important;
+    opacity: 0.7;
+  }
+
+  [role="dialog"],
+  [data-radix-dialog-content],
+  [cmdk-dialog],
+  [data-radix-select-content],
+  [data-radix-dropdown-menu-content] {
+    background-color: var(--panel) !important;
+    color: hsl(var(--text-primary));
+  }
+
+  [data-radix-dialog-overlay] {
+    background-color: var(--scrim) !important;
+    opacity: 0.7;
   }
 
   .task-complete {
