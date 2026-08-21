@@ -1,146 +1,270 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-bg-primary: hsl(var(--bg-primary));
+  --color-bg-secondary: hsl(var(--bg-secondary));
+  --color-bg-tertiary: hsl(var(--bg-tertiary));
+  --color-bg-elevated: hsl(var(--bg-elevated));
+  --color-bg-field: hsl(var(--bg-field));
+  --color-bg-overlay: #000000;
+  --color-text-primary: hsl(var(--text-primary));
+  --color-text-secondary: hsl(var(--text-secondary));
+  --color-text-tertiary: hsl(var(--text-tertiary));
+  --color-text-disabled: hsl(var(--text-disabled));
+  --color-text-inverse: hsl(var(--text-inverse));
+  --color-border-primary: hsl(var(--border-primary));
+  --color-border-secondary: hsl(var(--border-secondary));
+  --color-border-focus: hsl(var(--border-focus));
+  --color-border-hover: hsl(var(--border-hover));
+  --color-interactive-primary: hsl(var(--interactive-primary));
+  --color-interactive-primary-hover: hsl(var(--interactive-primary-hover));
+  --color-interactive-primary-active: hsl(var(--interactive-primary-active));
+  --color-interactive-secondary: hsl(var(--interactive-secondary));
+  --color-interactive-secondary-hover: hsl(var(--interactive-secondary-hover));
+  --color-interactive-secondary-active: hsl(var(--interactive-secondary-active));
+  --color-status-success: hsl(var(--status-success));
+  --color-status-success-subtle: hsl(var(--status-success-subtle));
+  --color-status-warning: hsl(var(--status-warning));
+  --color-status-warning-subtle: hsl(var(--status-warning-subtle));
+  --color-status-error: hsl(var(--status-error));
+  --color-status-error-subtle: hsl(var(--status-error-subtle));
+  --color-status-info: hsl(var(--status-info));
+  --color-status-info-subtle: hsl(var(--status-info-subtle));
+}
+
 /**
- * NEXUS Spatial UI Design System
- * CSS Custom Properties for theming
+ * NEXUS — opaque light/dark. No glass.
  */
 
 @layer base {
   :root {
-    /* Light Theme (Default) */
-    
-    /* Surfaces */
     --bg-primary: 0 0% 100%;
-    --bg-secondary: 210 20% 98%;
-    --bg-tertiary: 210 20% 96%;
+    --bg-secondary: 0 0% 96%;
+    --bg-tertiary: 0 0% 92%;
     --bg-elevated: 0 0% 100%;
+    --bg-field: 0 0% 94%;
     --bg-overlay: 0 0% 0%;
-    
-    /* Text */
-    --text-primary: 222 20% 12%;
-    --text-secondary: 220 10% 45%;
-    --text-tertiary: 220 10% 60%;
-    --text-disabled: 220 10% 75%;
+    --panel: #ffffff;
+    --field: #eeeeee;
+    --ink: #111111;
+    --scrim: #000000;
+    color-scheme: light;
+
+    --text-primary: 0 0% 8%;
+    --text-secondary: 0 0% 32%;
+    --text-tertiary: 0 0% 46%;
+    --text-disabled: 0 0% 68%;
     --text-inverse: 0 0% 100%;
-    
-    /* Borders */
-    --border-primary: 220 13% 91%;
-    --border-secondary: 220 13% 87%;
-    --border-focus: 222 70% 55%;
-    --border-hover: 220 13% 85%;
-    
-    /* Interactive */
-    --interactive-primary: 222 70% 55%;
-    --interactive-primary-hover: 222 70% 50%;
-    --interactive-primary-active: 222 70% 45%;
-    --interactive-secondary: 220 13% 91%;
-    --interactive-secondary-hover: 220 13% 87%;
-    --interactive-secondary-active: 220 13% 83%;
-    
-    /* Status */
-    --status-success: 142 70% 45%;
-    --status-success-subtle: 142 70% 97%;
-    --status-warning: 38 92% 50%;
-    --status-warning-subtle: 38 92% 97%;
-    --status-error: 0 72% 51%;
-    --status-error-subtle: 0 72% 97%;
-    --status-info: 210 92% 50%;
-    --status-info-subtle: 210 92% 97%;
-    
-    /* Accent */
-    --accent-purple: 270 70% 60%;
-    --accent-purple-subtle: 270 70% 97%;
-    --accent-pink: 330 70% 60%;
-    --accent-pink-subtle: 330 70% 97%;
-    --accent-orange: 25 85% 55%;
-    --accent-orange-subtle: 25 85% 97%;
-    --accent-teal: 175 70% 45%;
-    --accent-teal-subtle: 175 70% 97%;
-    --accent-indigo: 240 70% 60%;
-    --accent-indigo-subtle: 240 70% 97%;
-    
-    /* Spacing & Layout */
-    --radius-sm: 0.25rem;
-    --radius-base: 0.5rem;
-    --radius-md: 0.75rem;
-    --radius-lg: 1rem;
+
+    --border-primary: 0 0% 86%;
+    --border-secondary: 0 0% 78%;
+    --border-focus: 172 38% 28%;
+    --border-hover: 0 0% 70%;
+
+    --interactive-primary: 172 38% 28%;
+    --interactive-primary-hover: 172 38% 24%;
+    --interactive-primary-active: 172 40% 20%;
+    --interactive-secondary: 0 0% 94%;
+    --interactive-secondary-hover: 0 0% 90%;
+    --interactive-secondary-active: 0 0% 86%;
+
+    --status-success: 152 28% 32%;
+    --status-success-subtle: 152 20% 94%;
+    --status-warning: 32 50% 42%;
+    --status-warning-subtle: 32 40% 95%;
+    --status-error: 8 48% 44%;
+    --status-error-subtle: 8 40% 96%;
+    --status-info: 200 28% 38%;
+    --status-info-subtle: 200 24% 95%;
+
+    --accent-purple: 270 22% 46%;
+    --accent-purple-subtle: 270 18% 95%;
+    --accent-pink: 340 24% 48%;
+    --accent-pink-subtle: 340 20% 96%;
+    --accent-orange: 28 48% 46%;
+    --accent-orange-subtle: 28 36% 95%;
+    --accent-teal: 172 38% 28%;
+    --accent-teal-subtle: 172 20% 94%;
+    --accent-indigo: 230 22% 44%;
+    --accent-indigo-subtle: 230 18% 95%;
+
+    --radius-sm: 0.125rem;
+    --radius-base: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.75rem;
+
+    --motion-micro: 140ms;
+    --motion-base: 220ms;
+    --motion-complex: 360ms;
+    --ease-spatial: cubic-bezier(0.22, 1, 0.36, 1);
   }
-  
+
   .dark {
-    /* Dark Theme */
-    
-    /* Surfaces */
-    --bg-primary: 222 20% 8%;
-    --bg-secondary: 222 18% 11%;
-    --bg-tertiary: 222 16% 14%;
-    --bg-elevated: 222 16% 16%;
+    --bg-primary: 0 0% 0%;
+    --bg-secondary: 0 0% 7%;
+    --bg-tertiary: 0 0% 12%;
+    --bg-elevated: 0 0% 8%;
+    --bg-field: 0 0% 4%;
     --bg-overlay: 0 0% 0%;
-    
-    /* Text */
-    --text-primary: 210 20% 98%;
-    --text-secondary: 220 10% 70%;
-    --text-tertiary: 220 10% 55%;
-    --text-disabled: 220 10% 40%;
-    --text-inverse: 222 20% 12%;
-    
-    /* Borders */
-    --border-primary: 220 13% 20%;
-    --border-secondary: 220 13% 25%;
-    --border-focus: 222 70% 60%;
-    --border-hover: 220 13% 27%;
-    
-    /* Interactive */
-    --interactive-primary: 222 70% 60%;
-    --interactive-primary-hover: 222 70% 65%;
-    --interactive-primary-active: 222 70% 70%;
-    --interactive-secondary: 220 13% 20%;
-    --interactive-secondary-hover: 220 13% 25%;
-    --interactive-secondary-active: 220 13% 30%;
-    
-    /* Status */
-    --status-success: 142 60% 50%;
-    --status-success-subtle: 142 60% 12%;
-    --status-warning: 38 80% 55%;
-    --status-warning-subtle: 38 80% 12%;
-    --status-error: 0 65% 55%;
-    --status-error-subtle: 0 65% 12%;
-    --status-info: 210 80% 55%;
-    --status-info-subtle: 210 80% 12%;
-    
-    /* Accent */
-    --accent-purple: 270 60% 65%;
-    --accent-purple-subtle: 270 60% 12%;
-    --accent-pink: 330 60% 65%;
-    --accent-pink-subtle: 330 60% 12%;
-    --accent-orange: 25 75% 60%;
-    --accent-orange-subtle: 25 75% 12%;
-    --accent-teal: 175 60% 50%;
-    --accent-teal-subtle: 175 60% 12%;
-    --accent-indigo: 240 60% 65%;
-    --accent-indigo-subtle: 240 60% 12%;
+    --panel: #111111;
+    --field: #000000;
+    --ink: #f5f5f5;
+    --scrim: #000000;
+    color-scheme: dark;
+
+    --text-primary: 0 0% 96%;
+    --text-secondary: 0 0% 72%;
+    --text-tertiary: 0 0% 55%;
+    --text-disabled: 0 0% 38%;
+    --text-inverse: 0 0% 0%;
+
+    --border-primary: 0 0% 18%;
+    --border-secondary: 0 0% 24%;
+    --border-focus: 172 40% 52%;
+    --border-hover: 0 0% 30%;
+
+    --interactive-primary: 172 42% 52%;
+    --interactive-primary-hover: 172 42% 58%;
+    --interactive-primary-active: 172 40% 46%;
+    --interactive-secondary: 0 0% 14%;
+    --interactive-secondary-hover: 0 0% 18%;
+    --interactive-secondary-active: 0 0% 22%;
+
+    --status-success: 152 28% 52%;
+    --status-success-subtle: 152 18% 12%;
+    --status-warning: 32 42% 56%;
+    --status-warning-subtle: 32 20% 12%;
+    --status-error: 8 42% 58%;
+    --status-error-subtle: 8 22% 12%;
+    --status-info: 200 28% 56%;
+    --status-info-subtle: 200 18% 12%;
+
+    --accent-purple: 270 22% 62%;
+    --accent-purple-subtle: 270 16% 14%;
+    --accent-pink: 340 24% 64%;
+    --accent-pink-subtle: 340 16% 14%;
+    --accent-orange: 28 42% 58%;
+    --accent-orange-subtle: 28 20% 12%;
+    --accent-teal: 172 42% 52%;
+    --accent-teal-subtle: 172 18% 12%;
+    --accent-indigo: 230 22% 62%;
+    --accent-indigo-subtle: 230 16% 14%;
   }
-  
+
   * {
     border-color: hsl(var(--border-primary));
   }
-  
+
+  html {
+    font-family: "Segoe UI Variable Text", "Segoe UI", "Tahoma", "Helvetica Neue",
+      ui-sans-serif, system-ui, sans-serif;
+  }
+
+  html[dir="rtl"] {
+    font-family: Tahoma, "Segoe UI", Arial, ui-sans-serif, system-ui, sans-serif;
+  }
+
   body {
     background-color: hsl(var(--bg-primary));
     color: hsl(var(--text-primary));
-    font-feature-settings: "rlig" 1, "calt" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  input,
+  textarea,
+  select {
+    color: hsl(var(--text-primary));
+    background-color: hsl(var(--bg-field));
+    border-color: hsl(var(--border-secondary));
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: hsl(var(--text-tertiary));
+    opacity: 1;
+  }
+
+  ::selection {
+    background: hsl(var(--interactive-primary) / 0.18);
   }
 }
 
 @layer utilities {
-  /* Focus visible styles for accessibility */
   .focus-ring {
     outline: none;
-    box-shadow: 0 0 0 2px hsl(var(--border-focus)), 0 0 0 4px hsl(var(--bg-primary));
+    box-shadow: 0 0 0 2px hsl(var(--bg-primary)), 0 0 0 3.5px hsl(var(--border-focus));
   }
-  
-  /* Reduce motion for accessibility */
+
+  .font-mono {
+    font-family: "SF Mono", "Cascadia Mono", "Consolas", "Menlo", ui-monospace, monospace;
+    font-feature-settings: "tnum" 1;
+    letter-spacing: 0;
+  }
+
+  .label-caps {
+    font-size: 0.6875rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: hsl(var(--text-tertiary));
+  }
+
+  html[dir="rtl"] .label-caps {
+    letter-spacing: 0.02em;
+    text-transform: none;
+  }
+
+  .hairline {
+    height: 1px;
+    background: hsl(var(--border-primary));
+  }
+
+  .surface-canvas {
+    background: hsl(var(--bg-primary));
+  }
+
+  .surface-section {
+    background: hsl(var(--bg-secondary));
+  }
+
+  .surface-elevated {
+    background: hsl(var(--bg-elevated));
+  }
+
+  .field-well {
+    background: hsl(var(--bg-field));
+    color: hsl(var(--text-primary));
+  }
+
+  .panel-solid {
+    background-color: var(--panel) !important;
+    color: hsl(var(--text-primary));
+  }
+
+  .scrim-solid {
+    background-color: var(--scrim) !important;
+    opacity: 0.7;
+  }
+
+  .task-complete {
+    animation: task-complete var(--motion-base) var(--ease-spatial);
+  }
+
+  @keyframes task-complete {
+    from { opacity: 1; }
+    to { opacity: 0.55; }
+  }
+
+  @keyframes now-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.45; }
+  }
+
+  .now-dot {
+    animation: now-pulse 2.4s ease-in-out infinite;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -149,5 +273,70 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
     }
+    .now-dot {
+      animation: none;
+    }
   }
+}
+
+/* Popovers — always opaque. Do not use overlay opacity on the panel itself. */
+[data-nexus-scrim],
+[cmdk-overlay],
+[data-radix-dialog-overlay] {
+  z-index: 9990 !important;
+  background-color: rgba(0, 0, 0, 0.55) !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+[data-nexus-panel],
+[data-radix-dialog-content],
+[data-radix-select-content],
+[role="dialog"],
+[cmdk-dialog] {
+  z-index: 10000 !important;
+  background-color: #ffffff !important;
+  color: #111111 !important;
+  opacity: 1 !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+html.dark [data-nexus-panel],
+html.dark [data-radix-dialog-content],
+html.dark [data-radix-select-content],
+html.dark [role="dialog"],
+html.dark [cmdk-dialog] {
+  background-color: #111111 !important;
+  color: #f5f5f5 !important;
+}
+
+[data-nexus-panel] input,
+[data-nexus-panel] textarea,
+[data-nexus-panel] select,
+[role="dialog"] input,
+[role="dialog"] textarea,
+[role="dialog"] select,
+[data-radix-dialog-content] input,
+[data-radix-dialog-content] textarea,
+[data-radix-dialog-content] select {
+  background-color: #eeeeee !important;
+  color: #111111 !important;
+  caret-color: #111111 !important;
+  opacity: 1 !important;
+}
+
+html.dark [data-nexus-panel] input,
+html.dark [data-nexus-panel] textarea,
+html.dark [data-nexus-panel] select,
+html.dark [role="dialog"] input,
+html.dark [role="dialog"] textarea,
+html.dark [role="dialog"] select,
+html.dark [data-radix-dialog-content] input,
+html.dark [data-radix-dialog-content] textarea,
+html.dark [data-radix-dialog-content] select {
+  background-color: #000000 !important;
+  color: #f5f5f5 !important;
+  caret-color: #f5f5f5 !important;
 }

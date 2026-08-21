@@ -1,44 +1,32 @@
 "use server";
 
-import { TaskService, type CreateTaskInput, type UpdateTaskInput } from "@/domain/services/task-service";
+/**
+ * Server actions are reserved for future PostgreSQL synchronization.
+ * Phase 1 is local-first and offline-capable; the UI writes through
+ * the client repository, not these actions.
+ *
+ * They remain exported so a later sync worker can call the same domain
+ * operations against the existing Drizzle schema without inventing a
+ * second API.
+ */
+
+import type { CreateTaskInput, UpdateTaskInput } from "@/domain/task/service";
+import { applyCreate, applyUpdate } from "@/domain/task/service";
 import type { Task } from "@/domain/types";
 
 export async function createTaskAction(input: CreateTaskInput): Promise<Task> {
-  return await TaskService.createTask(input);
+  const result = applyCreate([], [], input);
+  if (!result.task) {
+    throw new Error("Unable to create task");
+  }
+  return result.task;
 }
 
 export async function updateTaskAction(
   taskId: string,
-  userId: string,
-  updates: UpdateTaskInput
+  _userId: string,
+  updates: UpdateTaskInput,
+  existing: Task[]
 ): Promise<Task | null> {
-  return await TaskService.updateTask(taskId, userId, updates);
-}
-
-export async function completeTaskAction(taskId: string, userId: string): Promise<Task | null> {
-  return await TaskService.completeTask(taskId, userId);
-}
-
-export async function reopenTaskAction(taskId: string, userId: string): Promise<Task | null> {
-  return await TaskService.reopenTask(taskId, userId);
-}
-
-export async function deleteTaskAction(taskId: string, userId: string): Promise<boolean> {
-  return await TaskService.deleteTask(taskId, userId);
-}
-
-export async function getTaskByIdAction(taskId: string, userId: string): Promise<Task | null> {
-  return await TaskService.getTaskById(taskId, userId);
-}
-
-export async function getAllTasksAction(userId: string): Promise<Task[]> {
-  return await TaskService.getAllTasks(userId);
-}
-
-export async function getTodayTasksAction(userId: string): Promise<Task[]> {
-  return await TaskService.getTodayTasks(userId);
-}
-
-export async function getOverdueTasksAction(userId: string): Promise<Task[]> {
-  return await TaskService.getOverdueTasks(userId);
+  return applyUpdate(existing, [], taskId, updates).task;
 }

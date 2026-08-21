@@ -1,72 +1,38 @@
 "use client";
 
-import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import {
-  Inbox,
-  ListTodo,
-  FolderKanban,
-  Zap,
-  Menu,
-} from "lucide-react";
+import { Inbox, ListTodo, FolderKanban, Target, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-interface NavItem {
-  title: string;
-  href: string;
-  icon: React.ReactNode;
-}
-
-const mobileNav: NavItem[] = [
-  {
-    title: "Today",
-    href: "/",
-    icon: <Inbox className="h-5 w-5" />,
-  },
-  {
-    title: "Tasks",
-    href: "/tasks",
-    icon: <ListTodo className="h-5 w-5" />,
-  },
-  {
-    title: "Projects",
-    href: "/projects",
-    icon: <FolderKanban className="h-5 w-5" />,
-  },
-  {
-    title: "Focus",
-    href: "/focus",
-    icon: <Zap className="h-5 w-5" />,
-  },
-  {
-    title: "More",
-    href: "/menu",
-    icon: <Menu className="h-5 w-5" />,
-  },
-];
+import { useT } from "@/i18n/use-t";
 
 export function MobileNav() {
   const pathname = usePathname();
-  
+  const t = useT();
+  const mobileNav = [
+    { title: t("nav.today"), href: "/", icon: Inbox },
+    { title: t("nav.tasks"), href: "/tasks", icon: ListTodo },
+    { title: t("nav.projects"), href: "/projects", icon: FolderKanban },
+    { title: t("nav.goals"), href: "/goals", icon: Target },
+    { title: t("nav.menu"), href: "/menu", icon: Menu },
+  ];
+
   return (
     <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 border-t border-border-primary bg-bg-elevated">
-      <div className="grid grid-cols-5 h-16">
+      <div className="grid grid-cols-5 h-14">
         {mobileNav.map((item) => {
-          const isActive = pathname === item.href;
-          
+          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
+          const Icon = item.icon;
           return (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                "flex flex-col items-center justify-center gap-1 text-xs font-medium transition-colors",
-                isActive
-                  ? "text-interactive-primary"
-                  : "text-text-tertiary hover:text-text-primary"
+                "flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-colors duration-fast",
+                isActive ? "text-interactive-primary" : "text-text-tertiary"
               )}
             >
-              {item.icon}
+              <Icon className="h-4 w-4" strokeWidth={1.6} />
               <span>{item.title}</span>
             </Link>
           );

@@ -4,6 +4,7 @@ import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FIELD_CLASS, FIELD_STYLE, PANEL_CLASS, PANEL_STYLE } from "@/lib/surfaces";
 
 const Select = SelectPrimitive.Root;
 const SelectGroup = SelectPrimitive.Group;
@@ -12,18 +13,26 @@ const SelectValue = SelectPrimitive.Value;
 const SelectTrigger = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Trigger>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Trigger>
->(({ className, children, ...props }, ref) => (
+>(({ className, children, style, ...props }, ref) => (
   <SelectPrimitive.Trigger
     ref={ref}
     className={cn(
-      "flex h-10 w-full items-center justify-between rounded-md border border-border-primary bg-bg-primary px-3 py-2 text-sm",
-      "ring-offset-bg-primary placeholder:text-text-tertiary",
-      "focus:outline-none focus:ring-2 focus:ring-border-focus focus:ring-offset-2",
+      "flex h-11 w-full items-center justify-between rounded border border-neutral-300 px-3 py-2 text-sm",
+      FIELD_CLASS,
+      "placeholder:text-neutral-500",
+      "focus:outline-none focus:ring-2 focus:ring-neutral-400 focus:ring-offset-2",
       "disabled:cursor-not-allowed disabled:opacity-50",
       "[&>span]:line-clamp-1",
       className
     )}
     {...props}
+    style={{
+      ...FIELD_STYLE,
+      ...style,
+      backgroundColor: "var(--field)",
+      color: "var(--ink)",
+      opacity: 1,
+    }}
   >
     {children}
     <SelectPrimitive.Icon asChild>
@@ -71,19 +80,28 @@ SelectScrollDownButton.displayName =
 const SelectContent = React.forwardRef<
   React.ElementRef<typeof SelectPrimitive.Content>,
   React.ComponentPropsWithoutRef<typeof SelectPrimitive.Content>
->(({ className, children, position = "popper", ...props }, ref) => (
+>(({ className, children, position = "popper", style, ...props }, ref) => (
   <SelectPrimitive.Portal>
     <SelectPrimitive.Content
       ref={ref}
+      data-nexus-panel=""
       className={cn(
-        "relative z-[1400] max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-border-secondary bg-bg-elevated text-text-primary shadow-md",
-        "data-[state=open]:animate-fade-in data-[state=closed]:animate-fade-out",
+        "relative z-[1400] max-h-96 min-w-[8rem] overflow-hidden rounded-md border border-neutral-300 dark:border-neutral-700 shadow-md",
+        PANEL_CLASS,
         position === "popper" &&
           "data-[side=bottom]:translate-y-1 data-[side=left]:-translate-x-1 data-[side=right]:translate-x-1 data-[side=top]:-translate-y-1",
         className
       )}
       position={position}
       {...props}
+      style={{
+        ...PANEL_STYLE,
+        ...style,
+        backgroundColor: "var(--panel)",
+        color: "var(--ink)",
+        opacity: 1,
+        zIndex: 1400,
+      }}
     >
       <SelectScrollUpButton />
       <SelectPrimitive.Viewport
@@ -121,7 +139,7 @@ const SelectItem = React.forwardRef<
     ref={ref}
     className={cn(
       "relative flex w-full cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none",
-      "focus:bg-bg-secondary focus:text-text-primary",
+      "focus:bg-neutral-100 focus:text-neutral-950 dark:focus:bg-neutral-800 dark:focus:text-neutral-50",
       "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
       className
     )}
@@ -144,7 +162,7 @@ const SelectSeparator = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <SelectPrimitive.Separator
     ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-border-primary", className)}
+    className={cn("-mx-1 my-1 h-px bg-neutral-200 dark:bg-neutral-800", className)}
     {...props}
   />
 ));
